@@ -1,0 +1,80 @@
+<?xml version"1.0"?>
+<article>
+	Allen2005
+	<author>Allen, G. and Davis, K. and Goodale, T. and Hutanu, A. and Kaiser,
+  H. and Kielmann, T. and Merzky, A. and van Nieuwpoort, R. and Reinefeld,
+  A. and Schintke, F. and Schott, T. and Seidel, E. and Ullmer, B.</author>
+	<title>The grid application toolkit: toward generic and easy application
+  programming interfaces for the grid</title>
+	<journal>Proceedings of the IEEE</journal>
+	<year>2005</year>
+	<volume>92</volume>
+	<pages>534--550</pages>
+	<number>3</number>
+	<month>Mar</month>
+	<doi>10.1109/JPROC.2004.842755</doi>
+	<owner>mab</owner>
+	<timestamp>2006.10.22</timestamp>
+</article>
+
+<article>
+	Baker2005
+	<author>Baker, M. and Apon, A. and Ferner, C. and Brown, J.</author>
+	<title>Emerging grid standards</title>
+	<journal>Computer</journal>
+	<year>2005</year>
+	<volume>38</volume>
+	<pages>43--50</pages>
+	<number>4</number>
+	<month>April</month>
+	<doi>10.1109/MC.2005.124</doi>
+	<owner>mab</owner>
+	<timestamp>2006.10.22</timestamp>
+</article>
+
+<inproceedings>
+	Boisseau2004
+	<author>Boisseau, J.R.</author>
+	<title>UT Grid: a comprehensive campus cyberinfrastructure</title>
+	<booktitle>High performance Distributed Computing, 2004. Proceedings. 13th IEEE
+  International Symposium on</booktitle>
+	<year>2004</year>
+	<pages>274--275</pages>
+	<month>4-6 June</month>
+	<doi>10.1109/HPDC.2004.1323590</doi>
+	<owner>mab</owner>
+	<timestamp>2006.10.22</timestamp>
+</inproceedings>
+
+<inproceedings>
+	Brunie2003
+	<author>Brunie, L. and Miquel, M. and Pierson, J.-M. and Tchounikine, A.
+  and Dhaenens, C. and Melab, N. and Hameurlain, A. and Morvan, F.</author>
+	<title>Information grids: managing and mining semantic data in a grid infrastructure;
+  open issues and application to geno-medical data</title>
+	<booktitle>Database and Expert Systems Applications, 2003. Proceedings. 14th
+  International Workshop on</booktitle>
+	<year>2003</year>
+	<pages>509--515</pages>
+	<month>1-5 Sept.</month>
+	<doi>10.1109/DEXA.2003.1232074</doi>
+	<owner>mab</owner>
+	<timestamp>2006.10.22</timestamp>
+</inproceedings>
+
+<inproceedings>
+	Cappello2005
+	<author>Cappello, F. and Caron, E. and Dayde, M. and Desprez, F. and Jegou,
+  Y. and Primet, P. and Jeannot, E. and Lanteri, S. and Leduc, J. and
+  Melab, N. and Mornet, G. and Namyst, R. and Quetier, B. and Richard,
+  O.</author>
+	<title>Grid'5000: a large scale and highly reconfigurable grid experimental
+  testbed}</title>
+	<booktitle>Grid Computing, 2005. The 6th IEEE/ACM International Workshop on</booktitle>
+	<year>2005</year>
+	<pages>8pp.</pages>
+	<month>13-14 Nov.</month>
+	<doi>10.1109/GRID.2005.1542730</doi>
+	<owner>mab</owner>
+	<timestamp>2006.10.22</timestamp>
+</inproceedings>
