@@ -65,63 +65,69 @@ struct TransrealNumber evaluate(struct TransrealNumber *a, struct TransrealNumbe
 		return retStruct;
 	}
 	
-	// both nums, either nullity done
 	
-	//not checked: trans x num, tran / num
-	// Mult : Signed infinity
-	
-	// 0 Mult : Nullity
-	// 0 div
-	
-	
-	/* HANDLE ONE (and only one) being INF or NEG_INF */
+	/* HANDLE ONE (and only one) being INF or NEG_INF (done) */
 	if (a->type == NUMBER || b->type == NUMBER) {
-		//TODO Mult : get Signed inf
-		// Div : Keeps sign + type
-		// if is 0 - zero , number result
-		// if it's a
 		if (a->type != NUMBER){
-			//TODO switch operation
-			retStruct.type = a->type;
+			// +/- inf * 0
+			if (opp == '*' && b->value == 0) {
+				retStruct.type = NULLITY;
+			}
+			else {
+				retStruct.type = a->type;
+			}
 			retStruct.value = 0;
 			return retStruct;
 		}
-		// if it's b
+
 		if (b->type != NUMBER){
-			//TODO switch operation
-			retStruct.type = b->type;
+			// 0 * +/- inf
+			if (opp == '*' && a->value == 0) {
+				retStruct.type = NULLITY;
+			}// 0 / +/- inf
+			else if (opp == '/' && a->value == 0){
+				retStruct.type = NUMBER;
+			}
+			else {
+				retStruct.type = b->type;
+			}
 			retStruct.value = 0;
 			return retStruct;
 		}
 	}
+	
 	
 	/* HANDLE BOTH TRANS NUMBERS */
+	
+	/* HANDLE a NEG_INFINITY, b NEG_INFINITY (done) */
+	if ((a->type == NEG_INFINITY) && (b->type == NEG_INFINITY)) {
+		
+		switch (opp) {
+			case '+':
+				retStruct.type = NEG_INFINITY;
+				break;
+			case '-':
+				retStruct.type = INFINITY;
+				break;
+			case '*':
+				retStruct.type = INFINITY;
+				break;
+			case '/':
+				retStruct.type = NULLITY;
+				break;
 
-	/* HANDLE a INF, b NEG_INF */
-	if ((a->type == INFINITY) && (b->type == NEG_INFINITY)) {
-		retStruct.type = NULLITY;
+
+			default:
+				break;
+		}
+		
 		retStruct.value = 0;
 		return retStruct;
 	}
 	
-	/* HANDLE a NEG_INF, b INF */
-	if ((a->type == NEG_INFINITY) && (b->type == NEG_INFINITY)) {
-		retStruct.type = NULLITY;
-		retStruct.value = 0;
-		return retStruct;
-	}
-	
-	/* HANDLE a NEG_INF, b NEG_INF */
-	if ((a->type == NEG_INFINITY) && (b->type == NEG_INFINITY)) {
-		retStruct.type = NEG_INFINITY;
-		retStruct.value = 0;
-		return retStruct;
-	}
-	
-	/* HANDLE a INF, b INF */
+	/* HANDLE a INFINITY, b INFINITY (done) */
 	if ((a->type == INFINITY) && (b->type == INFINITY)){
-
-		if (operation == '-') {
+		if (opp == '-' || opp == '/') {
 			retStruct.type = NULLITY;
 			retStruct.value = 0;
 		}
@@ -131,17 +137,50 @@ struct TransrealNumber evaluate(struct TransrealNumber *a, struct TransrealNumbe
 		}
 		return retStruct;
 	}
+
+	/* HANDLE a INFINITY, b NEG_INFINITY (done)*/
+	if ((a->type == INFINITY) && (b->type == NEG_INFINITY)) {
+		switch (opp) {
+			case '*':
+				retStruct.type = NEG_INFINITY;
+				break;
+			case '+':
+				retStruct.type = NULLITY;
+				break;
+			case '-':
+				retStruct.type = INFINITY;
+				break;
+			case '/':
+				retStruct.type = NULLITY;
+				break;
+		}
+		
+		retStruct.value = 0;
+		return retStruct;
+	}
+	
+	/* HANDLE a NEG_INFINITY, b INFINITY (done) */
+	if ((a->type == NEG_INFINITY) && (b->type == INFINITY)) {
+		if (opp == '+' || opp == '/') {
+			retStruct.type = NULLITY;
+		}
+		else {
+			retStruct.type = NEG_INFINITY;
+		}
+		retStruct.value = 0;
+		return retStruct;
+	}
 	
 }
 
 int main(){
 	struct TransrealNumber one, two, result;
 	one.value = 0;
-	one.type = NUMBER;
+	one.type = NEG_INFINITY;
 	two.value = 0;
 	two.type = NUMBER;
 	
-	result = evaluate(&one, &two, '/');
+	result = evaluate(&one, &two, '*');
 	
 	switch (result.type) {
 		case NUMBER:
