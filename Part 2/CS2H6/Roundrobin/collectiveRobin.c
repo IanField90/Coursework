@@ -24,19 +24,9 @@ int main(int argc, char **argv) {
 	MPI_Comm_size(MPI_COMM_WORLD, &NoProc); 
 	MPI_Comm_rank(MPI_COMM_WORLD, &ID);
 	
-	
-	if(ID == 0){
-		Num = 0;
-		MPI_Send(&Num, 1, MPI_INT, 1, 0, MPI_COMM_WORLD);
-	}
-	else {
-		MPI_Recv(&Num, 1, MPI_INT, ID-1, MPI_ANY_TAG, MPI_COMM_WORLD, &Status);
-		Num += ID;
-		if (ID+1 < NoProc)
-			MPI_Send(&Num, 1, MPI_INT, ID+1, 0, MPI_COMM_WORLD);
-	}
-	
-	printf("I am %d/%d Num = %d\n", ID, NoProc, Num);
+	MPI_Reduce(&Num, &ID, BUFFERSIZE, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+	Num += ID;
+	printf("Num is: %d", Num);
 	
 	MPI_Finalize();
 }
