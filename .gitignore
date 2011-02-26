@@ -1,0 +1,39 @@
+#C++
+*.slo
+*.lo
+*.o
+*.so
+*.lai
+*.la
+*.a
+
+#Java
+*.class
+
+#Eclipse
+
+*.pydevproject
+.project
+.metadata
+bin/**
+tmp/**
+tmp/**/*
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.classpath
+.settings/
+.loadpath
+
+# CDT-specific
+.cproject
+
+# OSX
+.DS_Store
+Icon?
+#   Thumbnails
+._*
+.Spotlight-V100
+.Trashes
