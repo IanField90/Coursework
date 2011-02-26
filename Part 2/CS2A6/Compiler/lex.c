@@ -11,7 +11,7 @@ int main(int argc, char *argv[]){
 	FILE *outputFile;
 	outputFile = fopen("lexOutput.txt", "w+");
 	char buffer[256] = {0};
-	/* Perform lexical analysis */
+	/* Perform lexical analysis - output to file */
 	inputFile = fopen(argv[1], "r");
 	int ch;
 	printf("Entering %s\n\n", argv[1]);
@@ -45,7 +45,7 @@ int main(int argc, char *argv[]){
 	fclose(inputFile);
 	fclose(outputFile);
 	/* Lexical analysis complete */
-	
+	printf("Lexical analysis complete\n\n");
 	return 0;
 }
 

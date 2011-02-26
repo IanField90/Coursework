@@ -1,12 +1,5 @@
 #include <stdio.h>
-
-enum CLASSIFICATION { NUMBER, INFINITY, NEG_INFINITY, NULLITY };
-
-struct TransrealNumber {
-	enum CLASSIFICATION type;
-	int value;
-};
-
+#include "trans.h"
 struct TransrealNumber evaluate(struct TransrealNumber *a, struct TransrealNumber *b, char opp){
 	struct TransrealNumber retStruct;
 
@@ -66,12 +59,17 @@ struct TransrealNumber evaluate(struct TransrealNumber *a, struct TransrealNumbe
 	}
 	
 	
-	/* HANDLE ONE (and only one) being INF or NEG_INF (done) */
+	/* HANDLE ONE (and only one) being INF or NEG_INF */
+	//TODO Handle negative numbers
+	
 	if (a->type == NUMBER || b->type == NUMBER) {
 		if (a->type != NUMBER){
 			// +/- inf * 0
 			if (opp == '*' && b->value == 0) {
 				retStruct.type = NULLITY;
+			}
+			else if (opp == '/' && b->value > 0) {
+				retStruct.type = INFINITY;
 			}
 			else {
 				retStruct.type = a->type;
@@ -173,12 +171,13 @@ struct TransrealNumber evaluate(struct TransrealNumber *a, struct TransrealNumbe
 	
 }
 
+/*
 int main(){
 	struct TransrealNumber one, two, result;
-	one.value = 0;
-	one.type = NEG_INFINITY;
+	one.value = -3;
+	one.type = NUMBER;
 	two.value = 0;
-	two.type = NUMBER;
+	two.type = NEG_INFINITY;
 	
 	result = evaluate(&one, &two, '*');
 	
@@ -203,3 +202,4 @@ int main(){
 
 	return 0;
 }
+*/

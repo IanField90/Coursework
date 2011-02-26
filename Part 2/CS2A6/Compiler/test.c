@@ -1,5 +1,5 @@
 #include <stdio.h>
-int main(int argc, char *argv[]){
+void main(){
 	/* Comment */
 	//another comment
 	int a;
@@ -8,6 +8,5 @@ int main(int argc, char *argv[]){
 	a = 3;
 	b = 4;
 	c = a / b;
-	printf("%d\n", c);
-	return 0;
+	printf(" %d \n", c);
 }
