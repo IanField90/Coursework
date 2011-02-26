@@ -1,13 +1,14 @@
 #include "trans.h"
 #include<stdio.h>
-void main (){
+int main (){
 struct TransrealNumber a;
 
 struct TransrealNumber b;
 
 struct TransrealNumber c;
-a={ NUMBER, 3 };
-b={ NUMBER, 4 };
-c=a/b;
-printf("%d\n",c);
+a.type=NUMBER; a.value=4;
+b.type=NUMBER; b.value=4;
+c=evaluate(&a, '/', &b);
+display(c);
+return 0;
 }

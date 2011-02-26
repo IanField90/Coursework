@@ -5,4 +5,6 @@ struct TransrealNumber {
 	int value;
 };
 
-struct TransrealNumber evaluate(struct TransrealNumber *a, struct TransrealNumber *b, char opp);
+struct TransrealNumber evaluate(struct TransrealNumber *a, char opp, struct TransrealNumber *b);
+
+void display(struct TransrealNumber res);

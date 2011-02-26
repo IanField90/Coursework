@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "trans.h"
-struct TransrealNumber evaluate(struct TransrealNumber *a, struct TransrealNumber *b, char opp){
+struct TransrealNumber evaluate(struct TransrealNumber *a, char opp, struct TransrealNumber *b){
 	struct TransrealNumber retStruct;
 
 	/* HANDLE NORMAL NUMBERS (done) */
@@ -171,35 +171,22 @@ struct TransrealNumber evaluate(struct TransrealNumber *a, struct TransrealNumbe
 	
 }
 
-/*
-int main(){
-	struct TransrealNumber one, two, result;
-	one.value = -3;
-	one.type = NUMBER;
-	two.value = 0;
-	two.type = NEG_INFINITY;
-	
-	result = evaluate(&one, &two, '*');
-	
-	switch (result.type) {
+void display(struct TransrealNumber res){
+	switch (res.type) {
 		case NUMBER:
-			printf("Return type is: NUMBER\n");
-			printf("Result value is: %d\n", result.value);
+			//printf("Return type is: NUMBER\n");
+			printf("Result value is: %d\n", res.value);
 			break;
 		case INFINITY:
-			printf("Return type is: INFINITY\n");
+			printf("Return value is: INFINITY\n");
 			break;
 		case NEG_INFINITY:
-			printf("Return type is: NEG_INFINITY\n");
+			printf("Return value is: NEG_INFINITY\n");
 			break;
 		case NULLITY:
-			printf("Return type is: NULLITY\n");
+			printf("Return value is: NULLITY\n");
 			break;
 		default:
 			break;
 	}
-	
-
-	return 0;
 }
-*/

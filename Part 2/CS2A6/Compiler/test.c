@@ -5,8 +5,8 @@ void main(){
 	int a;
 	int b;
 	int c;
-	a = 3;
+	a = 4;
 	b = 4;
 	c = a / b;
-	printf(" %d \n", c);
+	display(c);
 }
