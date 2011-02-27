@@ -4,7 +4,7 @@ gcc lex.c -o lex
 ./lex test.c
 rm lex
 
-gcc trans.c parse.c -o generator
+gcc trans.c generator.c -o generator
 ./generator
 rm generator
 
