@@ -3,7 +3,7 @@
 struct TransrealNumber evaluate(struct TransrealNumber *a, char opp, struct TransrealNumber *b){
 	struct TransrealNumber retStruct;
 
-	/* HANDLE NORMAL NUMBERS (done) */
+	/* HANDLE NORMAL NUMBERS */
 	if ((a->type == NUMBER) && (b->type == NUMBER)) {
 		retStruct.type = NUMBER;
 		switch (opp) {
@@ -51,17 +51,14 @@ struct TransrealNumber evaluate(struct TransrealNumber *a, char opp, struct Tran
 	}
 	
 	// both nums done
-	/* HANDLE NULLITY (done)*/
+	/* HANDLE NULLITY */
 	if (a->type == NULLITY || b->type == NULLITY) {
 		retStruct.type = NULLITY;
 		retStruct.value = 0;
 		return retStruct;
 	}
-	
-	
+		
 	/* HANDLE ONE (and only one) being INF or NEG_INF */
-	//TODO Handle negative numbers
-	
 	if (a->type == NUMBER || b->type == NUMBER) {
 		if (a->type != NUMBER){
 			// +/- inf * 0
@@ -94,10 +91,8 @@ struct TransrealNumber evaluate(struct TransrealNumber *a, char opp, struct Tran
 		}
 	}
 	
-	
 	/* HANDLE BOTH TRANS NUMBERS */
-	
-	/* HANDLE a NEG_INFINITY, b NEG_INFINITY (done) */
+	/* HANDLE a NEG_INFINITY, b NEG_INFINITY */
 	if ((a->type == NEG_INFINITY) && (b->type == NEG_INFINITY)) {
 		
 		switch (opp) {
@@ -123,7 +118,7 @@ struct TransrealNumber evaluate(struct TransrealNumber *a, char opp, struct Tran
 		return retStruct;
 	}
 	
-	/* HANDLE a INFINITY, b INFINITY (done) */
+	/* HANDLE a INFINITY, b INFINITY */
 	if ((a->type == INFINITY) && (b->type == INFINITY)){
 		if (opp == '-' || opp == '/') {
 			retStruct.type = NULLITY;
@@ -136,7 +131,7 @@ struct TransrealNumber evaluate(struct TransrealNumber *a, char opp, struct Tran
 		return retStruct;
 	}
 
-	/* HANDLE a INFINITY, b NEG_INFINITY (done)*/
+	/* HANDLE a INFINITY, b NEG_INFINITY */
 	if ((a->type == INFINITY) && (b->type == NEG_INFINITY)) {
 		switch (opp) {
 			case '*':
@@ -157,7 +152,7 @@ struct TransrealNumber evaluate(struct TransrealNumber *a, char opp, struct Tran
 		return retStruct;
 	}
 	
-	/* HANDLE a NEG_INFINITY, b INFINITY (done) */
+	/* HANDLE a NEG_INFINITY, b INFINITY */
 	if ((a->type == NEG_INFINITY) && (b->type == INFINITY)) {
 		if (opp == '+' || opp == '/') {
 			retStruct.type = NULLITY;
@@ -174,7 +169,6 @@ struct TransrealNumber evaluate(struct TransrealNumber *a, char opp, struct Tran
 void display(struct TransrealNumber res){
 	switch (res.type) {
 		case NUMBER:
-			//printf("Return type is: NUMBER\n");
 			printf("Result value is: %d\n", res.value);
 			break;
 		case INFINITY:

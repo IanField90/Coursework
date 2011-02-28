@@ -8,6 +8,7 @@ FILE *fp, *outputFile;
 char line[SIZE];
 char *ptr;
 char lastID;
+char ch;
 
 void parse();
 
@@ -77,15 +78,23 @@ void parse(){
 		//Take away \n
 		line[strlen(line)-1] = 0;
 		fprintf(outputFile, "%s", (ptr + strlen("IDENTIFIER\t\t")));
-		//if(strlen(ptr + strlen("IDENTIFIER\t\t")) == 2)
-			lastID = *(ptr + strlen("IDENTIFIER\t\t"));
+		lastID = *(ptr + strlen("IDENTIFIER\t\t"));
 		
 	}
 	else if ((ptr = strstr(line, "INTEGER\t\t")) != NULL) {
 		//It's an integer so intitialise new type
-		//TODO SORT OUT
 		fseek(outputFile, -1, SEEK_CUR);
-		fprintf(outputFile, ".type=NUMBER; %c.value=%c", lastID ,*(ptr + strlen("INTEGER\t\t")));
+		if ((ch = getc(outputFile)) == '-') {
+			//TODO just use atoi
+			fseek(outputFile, -1, SEEK_CUR);
+			fseek(outputFile, -1, SEEK_CUR);
+			fprintf(outputFile, ".type=NUMBER; %c.value=%d", lastID , 0 - atoi((ptr + strlen("INTEGER\t\t"))));
+		}
+		else {
+			fseek(outputFile, -1, SEEK_CUR);
+			fprintf(outputFile, ".type=NUMBER; %c.value=%c", lastID ,*(ptr + strlen("INTEGER\t\t")));
+		}
+
 	}
 	else if ((ptr = strstr(line, "UNKNOWN\t\t")) != NULL){
 		//remove \n

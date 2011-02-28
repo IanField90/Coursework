@@ -1,0 +1,24 @@
+CC = gcc
+CFLAGS = -g
+PROGS = make_queue send_queue read_queue remove_queue
+
+.c.o:
+$(CC) $(CFLAGS) -c $*.c
+
+all: $(PROGS)
+
+make_queue: make_queue.c
+	$(CC) $(CFLAGS) $< -o $@
+
+send_queue: send_queue.c
+	$(CC) $(CFLAGS) $< -o $@
+
+read_queue: read_queue.c
+	$(CC) $(CFLAGS) $< -o $@
+
+remove_queue: remove_queue.c
+	$(CC) $(CFLAGS) $< -o $@
+
+clean:
+	$(RM) $(PROGS) *.o *.a *~ *.out
+	

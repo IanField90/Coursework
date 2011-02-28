@@ -8,7 +8,7 @@ gcc trans.c generator.c -o generator
 ./generator
 rm generator
 
-cat program.c
+#cat program.c
 
 echo "Code Generation complete"
 
