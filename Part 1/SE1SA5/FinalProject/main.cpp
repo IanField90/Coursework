@@ -3,40 +3,24 @@
 #include <fstream>
 #include <time.h>
 #include "Card.h"
-
 #include "Deck.h"
-
 #include "Hand.h"
-
 #define TWIST_LIMIT 16
-
 using namespace std;
-
 int generateRandom(int max);
-
 void printCardSuit(Card toPrint);
 void printCard(Card toPrint);
-
 void printOptions(int value, Hand pHand, Deck GameDeck, bool stuck, int index);
-
 int calculateHandValue(Hand myHand);
-
 void gameLoop();
-
 void playerTurn(Hand playerCards, Deck GameDeck, int twistIndex);
-
 void computeWinner(Hand computerCards, Hand playerCards);
 
 int main (){
-
 	// print introduction to user
-
 	// FILE version - works if .exe executed directly
-
 	char ruleLetter;
-
 	ifstream ruleFile("Rules.txt");
-
 	if (ruleFile.is_open())
 	{
 		while(!ruleFile.eof())
@@ -48,51 +32,26 @@ int main (){
 	}
 
 	else { // if file open fails
-
 			cout << "Hello, welcome to Ian Field's 21 Card game.\n"
-
 		"The objective of the game is to obtain cards close or the same as "
-
 		"the value 21.\n" 
-
 		"In order to do this you are dealt 2 cards, values: 2-11.\n"
-
 		"Aces count as 11, Number cards have their own values.\n"
-
 		"Picture cards count as the value 10.\n\n"
-
 		"Thus it is possible to obtain 21 from the dealt hand.\n"
-
 		">> 'Busting' is when you have exceeded the value of 21.\n"
-
 		"   When this occurrs your turn is ended.\n"
-
 		">> 'Twisting' is when another card is dealt to you.\n"
-
 		">> 'Sticking' is when you choose to end your turn.\n"
-
 		"   After you have 'stuck' the computer takes it's turn.\n"
-
 		">> 'Burning' is when your cards total X or less.\n"
-
 		"   2 cards are then redealt to you.\n"
-
 		"In the event of a tie. The House wins!\n" << endl;
-
 	}
 
-
-
-
-
-
-
 	// Force real randoms
-
 	srand((int)time(NULL));
-
 	int input;
-
 	do{
 		cout << "Enter 1) to play, 2) to exit\n";
 		cin >> input;
