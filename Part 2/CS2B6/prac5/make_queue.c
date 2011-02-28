@@ -1,15 +1,19 @@
 #include <sys/msg.h>
 #include <sys/types.h>
 #include <sys/ipc.h>
+#include <stdio.h>
 
 int main(){
-	long int id;
+	long id;
 	struct msqid_ds *info;
-	msgget(IPC_PRIVATE, IPC_CREAT);
-	printf("Created Queue ID %ld\n", id);
-	
-	msgctl(id, IPC_STAT, info);
-	printf("Opened Queue ID %ld\n", id);
-	
+	int rtnVal;
+	rtnVal = msgget(IPC_PRIVATE, IPC_CREAT);
+	if (rtnVal != -1) {
+		printf("Created Queue ID = %ld\n", id);
+	}
+	else {
+		printf("Error creating message queue!\n");
+	}
+
 	return 0;
 }
