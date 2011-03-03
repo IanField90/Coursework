@@ -7,8 +7,9 @@ int main(){
 	long id;
 	struct msqid_ds *info;
 	int rtnVal;
-	rtnVal = msgget(IPC_PRIVATE, IPC_CREAT);
-	if (rtnVal != -1) {
+	
+	id = msgget(IPC_PRIVATE, 0666 | IPC_CREAT);
+	if (id != -1) {
 		printf("Created Queue ID = %ld\n", id);
 	}
 	else {

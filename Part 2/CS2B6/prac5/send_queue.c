@@ -9,7 +9,7 @@
 
 struct message {
 	long int type;
-	char text[1];
+	char text[MESSAGE_SIZE];
 };
 
 int main(int argc, char * argv[]){
@@ -25,12 +25,12 @@ int main(int argc, char * argv[]){
 		msg[i] = ch;
 		i++;
 	}
-	msg[i] = 0;
+	msg[i] = 0; /* zero terminated string */
 	
 	Message.type = 1110;
 	strcpy(Message.text, msg);
 	
-	sendRes = msgsnd(id, &Message, MESSAGE_SIZE, IPC_NOWAIT);
+	sendRes = msgsnd(id, &Message, sizeof(struct message) - sizeof(long), 0);
 	if (sendRes == 0) {
 		printf("Message posted.\n");
 	}
