@@ -20,7 +20,7 @@ int main(int argc, char * argv[]){
 		printf("Message text: %s\n", msg.text);
 	}
 	else {
-		printf("Fucked\n");
+		printf("Error reading queue.\n");
 	}
 	
 	return 0;

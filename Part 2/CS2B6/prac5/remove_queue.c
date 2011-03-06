@@ -12,7 +12,5 @@ int main(int argc, char * argv[]){
 	else {
 		printf("Expected argument: Queue\n");
 	}
-
-	
 	return 0;
 }
