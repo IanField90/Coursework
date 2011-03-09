@@ -1,65 +1,67 @@
 CREATE TABLE student(
-	StudentID varchar2(8),
-	StudentNumber integer,
+	StudentID VARCHAR2(8),
+	StudentNUMBER integer,
 	Title varchar(5),
-	FirstName varchar2(60), 
-	LastName varchar2(60), 
-	EmailAddress varchar2(100), 
+	FirstName VARCHAR2(60), 
+	LastName VARCHAR2(60), 
+	EmailAddress VARCHAR2(100), 
 	CV BLOB
 );
 
 CREATE TABLE company(
-	CompanyID Number(5),
-	CompanyName varchar2(50), 
-	Sector varchar2(7), 
-	'Size' Char(11),
+	CompanyID NUMBER(5),
+	CompanyName VARCHAR2(50), 
+	Sector VARCHAR2(7), 
+	'Size' VARCHAR2(11),
 );
 
 CREATE TABLE contact(
-	ContactID Number(5),
-	CompanyID Number(5),
-	Title varchar2(5), 
-	FirstName varchar2(60), 
-	Surname varchar2(60), 
-	Position varchar2(60),
-	AddressLine1 varchar2(120),
-	AddressLine2 varchar2(120),
-	PostCode varchar2(8), 
-	Email varchar2(100),
+	ContactID NUMBER(5),
+	CompanyID NUMBER(5),
+	Title VARCHAR2(5), 
+	FirstName VARCHAR2(60), 
+	Surname VARCHAR2(60), 
+	Position VARCHAR2(60),
+	AddressLine1 VARCHAR2(120),
+	AddressLine2 VARCHAR2(120),
+	PostCode VARCHAR2(8), 
+	Email VARCHAR2(100),
 );
 
 CREATE TABLE placement (
-	PlacementID Number(5),
-	Position varchar2(60),
-	Description varchar2(150),
-	LengthMonths Number(2),
-	Salary Number(7.2),
+	PlacementID NUMBER(5),
+	Position VARCHAR2(60),
+	Description VARCHAR2(150),
+	LengthMonths NUMBER(2),
+	Salary NUMBER(7,2),
 	Deadline DATE,
 	StartDate DATE,
-	NoOfPositions Number(3),
+	NoOfPositions NUMBER(3)
 );
 
 CREATE TABLE placement_contacts(
-	PlacementID Number(5),
-	ContactID Number(5)
-);
+	PlacementID NUMBER(5),
+	ContactID NUMBER(5)
+)
 
 CREATE TABLE application(
-	ApplicationID Number(5),
-	StudentID varchar2(7),
-	PlacementID Number(5),
-	DateOfApplication DATE,
+	ApplicationID NUMBER(5),
+	StudentID VARCHAR2(7),
+	PlacementID NUMBER(5),
+	DateOfApplication DATE DEFAULT sysdate,
 	LastCompanyUpdate DATE,
 	LastStudentUpdate DATE,
-	Notes varchar2(250),
+	Status VARCHAR2(1) DEFAULT 'C' NOT NULL,
+	Stage VARCHAR2(1) DEFAULT 'S' NOT NULL,
+	Notes VARCHAR2(250),
 	CoverLetter BLOB
 );
 
 CREATE TABLE stage_history(
-	StageDate DATE,
+  ApplicationID NUMBER(5),
+	StageDate DATE DEFAULT (SELECT FROM application WHERE ApplicationID = stage_history.ApplicationID),
 	CompanyUpdate DATE,
 	StudentUpdate DATE,
-	Stage varchar2(20),
-	Status char
+	Stage VARCHAR2(20),
+	Status VARCHAR2(1)
 );
-

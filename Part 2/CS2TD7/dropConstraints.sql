@@ -1,0 +1,27 @@
+ALTER TABLE student
+  DROP CONSTRAINT 
+;
+
+ALTER TABLE company
+  DROP CONSTRAINT 
+;
+
+ALTER TABLE contact
+  DROP CONSTRAINT 
+;
+
+ALTER TABLE placement
+  DROP CONSTRAINT 
+;
+
+ALTER TABLE placement_contacts
+  DROP CONSTRAINT 
+;
+
+ALTER TABLE application
+  DROP CONSTRAINT 
+;
+
+ALTER TABLE stage_history
+  DROP CONSTRAINT 
+;
