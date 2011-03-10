@@ -42,7 +42,7 @@ CREATE TABLE placement (
 CREATE TABLE placement_contacts(
 	PlacementID NUMBER(5),
 	ContactID NUMBER(5)
-)
+);
 
 CREATE TABLE application(
 	ApplicationID NUMBER(5),
