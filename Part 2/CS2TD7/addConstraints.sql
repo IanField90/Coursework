@@ -73,7 +73,7 @@ ALTER TABLE application
 			DateOfApplication <= (SELECT Deadline FROM placement 
 			WHERE placmentID = application.PlacementID
 		),
-		CONSTRAINT application_stat CHECK (Status IN ('C','A','T','U','R')),
+		CONSTRAINT application_stat CHECK (Status IN ('C','A','T','U','R'))
 	)
 ;
 
@@ -139,9 +139,9 @@ BEFORE INSERT ON application
 FOR EACH ROW
 BEGIN
 	--If student already has placementID with status 'A' block insert
-	IF()
+	IF(NUM_ROWS(SELECT * FROM application WHERE StudentID = NEW.StudentID AND Status = 'A') = 1)
 		THEN
-
+			NULL
 		ELSE
 		-- Perform Insertion
 	END IF;
