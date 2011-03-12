@@ -1,5 +1,6 @@
---ALTER TRIGGER application_insert DISABLE;
---ALTER TRIGGER application_update DISABLE;
+ALTER TRIGGER application_insert DISABLE;
+ALTER TRIGGER application_update DISABLE;
+ALTER TRIGGER placement_insert DISABLE;
 
 DROP SEQUENCE student_sq;
 DROP SEQUENCE company_sq;
@@ -32,13 +33,10 @@ ALTER TABLE placement DROP CONSTRAINT placement_pk;
 ALTER TABLE placement DROP CONSTRAINT placement_nopos;
 ALTER TABLE placement DROP CONSTRAINT placement_len;
 ALTER TABLE placement DROP CONSTRAINT placement_sal;
-ALTER TABLE placement DROP CONSTRAINT placement_dl;
-ALTER TABLE placement DROP CONSTRAINT placement_sd;
 
 ALTER TABLE placement_contacts DROP CONSTRAINT placement_contacts_pk;
 
 ALTER TABLE application DROP CONSTRAINT application_pk;
-ALTER TABLE application DROP CONSTRAINT application_date;
 ALTER TABLE application DROP CONSTRAINT application_stat;
 
 ALTER TABLE stage_history DROP CONSTRAINT stage_hist_pk;
