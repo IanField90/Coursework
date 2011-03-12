@@ -119,3 +119,19 @@ CREATE OR REPLACE TRIGGER application_update
     END IF;
   END application_update;
 /
+
+CREATE OR REPLACE TRIGGER application_insert
+BEFORE INSERT ON application
+FOR EACH ROW
+DECLARE dl DATE;
+BEGIN 
+  SELECT Deadline INTO dl
+  FROM Placement
+  WHERE PlacementID = :NEW.PlacementID;
+  
+  IF sysdate > dl
+  THEN
+    RAISE_APPLICATION_ERROR(-3002, 'Application too late');
+  END IF;
+END;
+/
