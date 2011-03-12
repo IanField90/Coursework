@@ -3,6 +3,7 @@ CREATE SEQUENCE student_sq INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE CACHE 
 CREATE SEQUENCE company_sq INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE CACHE 10;
 CREATE SEQUENCE contact_sq INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE CACHE 10;
 CREATE SEQUENCE placement_sq INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE CACHE 10;
+CREATE SEQUENCE application_sq INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE CACHE 10;
 
 -- Add more simple constraints to tables
 ALTER TABLE student
@@ -20,9 +21,9 @@ ALTER TABLE company
   ADD(
     CONSTRAINT company_pk PRIMARY KEY (CompanyID),
     CONSTRAINT company_uq UNIQUE(CompanyName, Sector),
-    CONSTRAINT company_size CHECK ('Size' > '5'),
+    CONSTRAINT company_size CHECK ("Size" > '5'),
     CONSTRAINT company_sect CHECK (
-      'Sector' IN ('Comp', 'Finance', 'Edu', 'Public', 'Other')
+      Sector IN ('COMP', 'FINANCE', 'EDU', 'PUBLIC', 'OTHER')
     )
   )
 ;
@@ -31,7 +32,7 @@ ALTER TABLE contact
   ADD(
     CONSTRAINT contact_pk PRIMARY KEY (ContactID),
     CONSTRAINT contact_fk FOREIGN KEY (CompanyID) REFERENCES company(CompanyID),
-    CONSTRAINT contact_email CHECK (regexp_like(email, '\W@\W')),
+    CONSTRAINT contact_email CHECK (regexp_like(email, '\@\')),
     CONSTRAINT contact_uq UNIQUE(email),
     CONSTRAINT contact_title CHECK (
       Title IN ('MR','MRS','DR', 'PROF', 'MISS', 'MS', 'OTHER')
@@ -44,8 +45,8 @@ ALTER TABLE placement
     CONSTRAINT placement_pk PRIMARY KEY (PlacementID),
     CONSTRAINT placement_nopos CHECK (NoOfPositions > 0),
     CONSTRAINT placement_len CHECK (LengthMonths >= 3 AND LengthMonths <=15),
-    CONSTRAINT placement_sal CHECK (Salary >=0 AND Salary <= 99999.99),
-    CONSTRAINT placement_sd CHECK (StartDate > (deadline + 730))
+    CONSTRAINT placement_sal CHECK (Salary >=0 AND Salary <= 99999.99)
+    --CONSTRAINT placement_sd CHECK (StartDate > (deadline + 730))
   )
 ;
 

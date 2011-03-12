@@ -6,6 +6,7 @@ DROP SEQUENCE student_sq;
 DROP SEQUENCE company_sq;
 DROP SEQUENCE contact_sq;
 DROP SEQUENCE placement_sq;
+DROP SEQUENCE application_sq;
 
 -- Drop foreign keys first
 ALTER TABLE application DROP CONSTRAINT application_fk1;
@@ -33,6 +34,7 @@ ALTER TABLE placement DROP CONSTRAINT placement_pk;
 ALTER TABLE placement DROP CONSTRAINT placement_nopos;
 ALTER TABLE placement DROP CONSTRAINT placement_len;
 ALTER TABLE placement DROP CONSTRAINT placement_sal;
+--ALTER TABLE placement DROP CONSTRAINT placement_sd;
 
 ALTER TABLE placement_contacts DROP CONSTRAINT placement_contacts_pk;
 
