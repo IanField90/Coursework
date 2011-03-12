@@ -39,7 +39,6 @@ ALTER TABLE contact
   )
 ;
 
---Date Error
 ALTER TABLE placement
   ADD(
     CONSTRAINT placement_pk PRIMARY KEY (PlacementID),
@@ -79,90 +78,44 @@ ALTER TABLE stage_history
   )
 ;
 
-/*
-
--- application date check
-    /*
-    CONSTRAINT application_date CHECK (
-      DateOfApplication <= (SELECT Deadline FROM placement 
-      WHERE placmentID = application.PlacementID
-    ),*/
-    
--- placement deadline date check
---CONSTRAINT placement_dl CHECK (deadline BETWEEN sysdate AND (dealine + 365))
+-- placement insertion constraint for Deadline
+CREATE OR REPLACE TRIGGER placement_insert
+  BEFORE UPDATE ON placement
+  FOR EACH ROW
+  WHEN(NEW.deadline NOT BETWEEN sysdate AND (sysdate + 365))
+  BEGIN
+    RAISE_APPLICATION_ERROR(-3000, 'Deadline must be between now and 1 year from now');
+  END placement_insert;
+/
 
 -- application update constraints
 CREATE OR REPLACE TRIGGER application_update
   BEFORE UPDATE ON application
   FOR EACH ROW
+  WHEN(NEW.Status = 'C' OR NEW.Status = 'A')
+  DECLARE X NUMBER;
   BEGIN
-    IF(:NEW.Status = 'C' OR :NEW.Status = 'A')
-      THEN
-        --If stage_history has C or A under status for placementID
-        IF(NUM_ROWS(SELECT Stage FROM stage_history 
-            WHERE PlacementID = NEW.PlacementID AND Status = NEW.Status) = 1)
-          --Block 'C' and 'A'
-          NULL
-        ELSE
-          --Do update
-          UPDATE TABLE application
-          SET Status = :NEW.Status
-          WHERE PlacementID = NEW.PlacementID
-          
-          --Create Stage_history entry
-          INSERT INTO stage_history
-          VALUES(
-          :NEW.ApplicationID, 
-          :NEW.StageDate, 
-          :NEW.CompanyUpdate, 
-          :NEW.StudentUpdate,
-          :NEW.Stage,
-          :NEW.Status
-          );
-        END IF;
+    SELECT COUNT(*) INTO X
+    FROM stage_history
+    WHERE ApplicationID = :NEW.ApplicationID 
+    AND Status = :NEW.Status;
+    
+    IF X >= 1
+    THEN
+      RAISE_APPLICATION_ERROR(-3001, 'Status already exists for application/student');
+      --Update does not execute
     ELSE
-      --Do update regardless
-      
       --Create Stage_history entry
       INSERT INTO stage_history
       VALUES(
       :NEW.ApplicationID, 
-      :NEW.StageDate, 
-      :NEW.CompanyUpdate, 
-      :NEW.StudentUpdate,
+      sysdate, 
+      :NEW.LastCompanyUpdate, 
+      :NEW.LastStudentUpdate,
       :NEW.Stage,
       :NEW.Status
       );
+      --Update executes
     END IF;
-  END;
-
--- Application insert constraint
--- Student cannot have more than one appication 'C'
-CREATE OR REPLACE TRIGGER application_insert
-  BEFORE INSERT ON application
-  FOR EACH ROW
-  BEGIN
-    --If student already has placementID with status 'A' block insert
-    IF(NUM_ROWS(SELECT * FROM application WHERE StudentID = NEW.StudentID AND Status = 'A') = 1)
-      THEN
-        NULL
-      ELSE
-      -- Perform Insertion
-      INSERT INTO application
-      VALUES(
-      
-      );
-    END IF;
-  
-    --Create Stage_history entry
-    INSERT INTO stage_history
-    VALUES(
-    :NEW.ApplicationID, 
-    :NEW.StageDate, 
-    :NEW.CompanyUpdate, 
-    :NEW.StudentUpdate,
-    :NEW.Stage,
-    :NEW.Status
-    );
-  END;
-  */
+  END application_update;
+/
