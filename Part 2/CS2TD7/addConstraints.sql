@@ -9,10 +9,10 @@ ALTER TABLE student
 	ADD(
     CONSTRAINT student_pk PRIMARY KEY (StudentID),
     CONSTRAINT student_no CHECK (
-      regexp_like(StudentNumber, '[:alpha:]{3}[:digit:]{2}[:alpha:]{3}')),
+      regexp_like(StudentNumber, '[[:alpha:]]{3}[[:digit:]]{2}[[:alpha:]]{3}')),
     CONSTRAINT student_title CHECK (
       Title IN ('MR','MRS','DR', 'PROF', 'MISS', 'MS', 'OTHER')),
-    CONSTRAINT student_email CHECK (regexp_like(EmailAddress,'\W@\W'))
+    CONSTRAINT student_email CHECK (regexp_like(EmailAddress,'\@\'))
   )
 ;
 
@@ -78,6 +78,7 @@ ALTER TABLE stage_history
   )
 ;
 
+--OK
 -- placement insertion constraint for Deadline
 CREATE OR REPLACE TRIGGER placement_insert
   BEFORE UPDATE ON placement
