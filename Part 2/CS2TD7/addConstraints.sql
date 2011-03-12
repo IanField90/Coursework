@@ -121,17 +121,30 @@ CREATE OR REPLACE TRIGGER application_update
 /
 
 CREATE OR REPLACE TRIGGER application_insert
-BEFORE INSERT ON application
-FOR EACH ROW
-DECLARE dl DATE;
-BEGIN 
-  SELECT Deadline INTO dl
-  FROM Placement
-  WHERE PlacementID = :NEW.PlacementID;
+  BEFORE INSERT ON application
+  FOR EACH ROW
+  DECLARE dl DATE;
+    X NUMBER;
+  BEGIN 
+    --CHECK THE DEADLINE
+    SELECT Deadline INTO dl
+    FROM Placement
+    WHERE PlacementID = :NEW.PlacementID;
   
-  IF sysdate > dl
-  THEN
-    RAISE_APPLICATION_ERROR(-3002, 'Application too late');
-  END IF;
-END;
+    IF sysdate > dl
+    THEN
+      RAISE_APPLICATION_ERROR(-3002, 'Application too late');
+    END IF;
+  
+    SELECT COUNT(*) INTO X
+    FROM application
+    WHERE StudentID = :NEW.StudentID 
+    AND Status = 'A';
+    
+    IF X >= 1
+    THEN
+      RAISE_APPLICATION_ERROR(-3003, 'Already accepted placement');
+    END IF;
+    
+  END;
 /
