@@ -1,3 +1,18 @@
+/*
+--reset
+ROLLBACK;
+DROP SEQUENCE student_sq;
+DROP SEQUENCE company_sq;
+DROP SEQUENCE contact_sq;
+drop sequence PLACEMENT_SQ;
+DROP SEQUENCE application_sq;
+create sequence STUDENT_SQ increment by 1 start with 1 nomaxvalue nocycle cache 10;
+create sequence COMPANY_SQ increment by 1 start with 1 nomaxvalue nocycle cache 10;
+create sequence CONTACT_SQ increment by 1 start with 1 nomaxvalue nocycle cache 10;
+create sequence PLACEMENT_SQ increment by 1 start with 1 nomaxvalue nocycle cache 10;
+CREATE SEQUENCE application_sq INCREMENT BY 1 START WITH 1 NOMAXVALUE NOCYCLE CACHE 10;
+--*/
+
 INSERT INTO student
 VALUES 
 (
@@ -55,7 +70,7 @@ VALUES(
 INSERT INTO contact
 VALUES(
   contact_sq.nextval,
-  1,
+  2,
   'MR',
   'John',
   'Smith',
@@ -91,7 +106,7 @@ VALUES(
 );
 
 INSERT INTO placement_contacts
-VALUES(
+values(
   1,
   1
 );
