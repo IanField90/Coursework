@@ -31,7 +31,7 @@ ALTER TABLE company
 ALTER TABLE contact
   ADD(
     CONSTRAINT contact_pk PRIMARY KEY (contactid),
-    CONSTRAINT contact_fk FOREIGN KEY (companyid) REFERENCES company(companyid),
+    CONSTRAINT contact_fk FOREIGN KEY (companyid) REFERENCES company(companyid) ON DELETE CASCADE,
     CONSTRAINT contact_email CHECK (REGEXP_LIKE(email, '\@\')),
     CONSTRAINT contact_uq UNIQUE(email),
     CONSTRAINT contact_title CHECK (
@@ -54,9 +54,9 @@ ALTER TABLE placement_contacts
   ADD(
     CONSTRAINT placement_contacts_pk PRIMARY KEY (placementid, contactid),
     CONSTRAINT placement_contacts_fk1 FOREIGN KEY (placementid)
-      REFERENCES placement(placementid),
+      REFERENCES placement(placementid) ON DELETE CASCADE,
     CONSTRAINT placement_contacts_fk2 FOREIGN KEY (contactid)
-      REFERENCES contact(contactid)
+      REFERENCES contact(contactid) ON DELETE CASCADE
   )
 ;
 
@@ -64,9 +64,9 @@ ALTER TABLE application
   ADD(
     CONSTRAINT application_pk PRIMARY KEY (applicationid),
     CONSTRAINT application_fk1 FOREIGN KEY (studentid)
-      REFERENCES student(studentid),
+      REFERENCES student(studentid) ON DELETE CASCADE,
     CONSTRAINT application_fk2 FOREIGN KEY (placementid)
-      REFERENCES placement(placementid),
+      REFERENCES placement(placementid) ON DELETE CASCADE,
     CONSTRAINT application_stat CHECK (status IN ('C','A','T','U','R'))
   )
 ;
@@ -75,7 +75,7 @@ ALTER TABLE stage_history
   ADD(
     CONSTRAINT stage_hist_pk PRIMARY KEY (applicationid, stagedate),
     CONSTRAINT stage_hist_fk FOREIGN KEY (applicationid) 
-      REFERENCES application(applicationid)
+      REFERENCES application(applicationid) ON DELETE CASCADE
   )
 ;
 
