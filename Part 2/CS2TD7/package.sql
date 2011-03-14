@@ -32,7 +32,7 @@ AS
 	IS
 	BEGIN
 		--to ensure references are deleted too ON DELETE CASCADE for FOREIGN KEYs
-		DELETE FROM comp 
+		DELETE FROM company 
 		WHERE companyid = p_id;
 	END delete_comp;
 
