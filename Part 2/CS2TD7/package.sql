@@ -1,24 +1,21 @@
 CREATE OR REPLACE PACKAGE placement_pck
 AS
 
-PROCEDURE insert_comp(p_name company.companyname%TYPE
-			p_sect company.sector%TYPE, p_size company.size%TYPE);
+PROCEDURE insert_comp(p_name company.companyname%TYPE,
+			p_sect company.sector%TYPE, p_size NUMBER);
 
 PROCEDURE delete_comp(p_id company.companyid%TYPE);
 
---CURSOR comp_placements_cur (p_comp_id IN company.companyid%TYPE);
---PROCEDURE query_comp_placements(p_id company.companyid%TYPE);
-
---PROCEDURE update_cur_row
+PROCEDURE query_nil_app_placements;
 
 END placement_pck;
 /
-SHOW ERRORS
 
+--Populate the package body
 CREATE OR REPLACE PACKAGE BODY placement_pck
 AS
 
-	PROCEDURE insert_comp(p_name company.companyname%TYPE
+	PROCEDURE insert_comp(p_name company.companyname%TYPE,
 				p_sect company.sector%TYPE, p_size company.size%TYPE)
 	IS
 	BEGIN
@@ -35,26 +32,29 @@ AS
 	IS
 	BEGIN
 		--to ensure references are deleted too ON DELETE CASCADE for FOREIGN KEYs
-		DELETE * FROM comp 
+		DELETE FROM comp 
 		WHERE companyid = p_id;
 	END delete_comp;
 
   --Return placements with no applicaitions
-  PROCEDURE query_nil_app_placements()
+  PROCEDURE query_nil_app_placements
   IS
-  DECLARE
-    CURSOR query_cur IS SELECT * FROM Application;
-    NUMBER x;
+    CURSOR query_cur IS SELECT * FROM Placement;
+	X NUMBER;
+	cur_row Placement%ROWTYPE;
   
   BEGIN
+	DBMS_OUTPUT.enable();
     OPEN query_cur;
     LOOP
-      X = SELECT COUNT(*) INTO X
+		FETCH query_cur INTO cur_row;
+		SELECT COUNT(*) INTO X
           FROM Application 
-          WHERE PlacementID = query_cur.PlacementID;
+          WHERE PlacementID = cur_row.PlacementID;
                   
       IF X = 0
-        FETCH query_cur INTO temp;
+	  THEN
+        DBMS_OUTPUT.PUT_LINE('PlacementID: ' || cur_row.PlacementID || ' Position: ' || cur_row.PlacementID || ' Description: ' || cur_row.Description );
       END IF;
     END LOOP;
   END query_nil_app_placements;
@@ -62,6 +62,5 @@ AS
 
 --  PROCEDURE update_row()
 
-END placement pck;
+END placement_pck;
 /
-SHOW ERRORS
