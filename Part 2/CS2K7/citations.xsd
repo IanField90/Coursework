@@ -28,5 +28,4 @@
 	</xs:element>
 	<xs:element name="owner" type="xsd:string" use="required" />
 	<xs:element name="timestamp" type="xsd:date" use="required" />
-	<!-- Slide 23 L3-->
 </xs:schema>
