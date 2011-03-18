@@ -1,31 +1,72 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	elementFormDefault="qualified">
 	
-	<xs:element name="author" type="xsd:string" use="required" >
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:whitespace value="collapse" />
-			</xs:restriction>
-		</xs:simpleType>
+	<xs:element name="citations">
+		<xs:element name="article">
+			<xs:complexType>
+				<xs:sequence>
+					<xs:element name="author" type="xs:string" use="required" >
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:whitespace value="collapse" />
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					
+					<xs:element name="title" type="xs:string" />
+					<xs:element name="journal" type="xs:string" />
+					<xs:element name="year" type="xs:gYear" />
+					<xs:element name="volume" type="xs:integer" />
+					<xs:element name="pages" type="xs:string" />
+					<xs:element name="number" type="xs:integer" />
+					<xs:element name="month" type="xs:gMonth" />
+			
+					<xs:element name="doi" use="required" >
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:pattern value="^[0-9]+.[0-9]+\/[a-zA-Z]+.[0-9]+.[0-9]+$" />
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					
+					<xs:element name="owner" type="xs:string" />
+					<xs:element name="timestamp" type="xs:date" />
+				</xs:sequence>
+			</xs:complexType>
+		</xs:element>
+		
+		<xs:element name="inproceedings">
+			<xs:complexType>
+				<xs:sequence>
+					<xs:element name="author" type="xs:string" use="required" >
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:whitespace value="collapse" />
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					
+					<xs:element name="title" type="xs:string" />
+					<xs:element name="journal" type="xs:string" />
+					<xs:element name="year" type="xs:gYear" />
+					<xs:element name="booktitle" type="xs:string" />
+					<xs:element name="pages" type="xs:string" />
+					<xs:element name="month" type="xs:gMonth" />
+					
+					<xs:element name="doi" use="required" >
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:pattern value="^[0-9]+.[0-9]+\/[a-zA-Z]+.[0-9]+.[0-9]+$" />
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					
+					<xs:element name="owner" type="xs:string" />
+					<xs:element name="timestamp" type="xs:date" />
+				</xs:sequence>
+			</xs:complexType>
+		</xs:element>
+		
 	</xs:element>
-	
-	<xs:element name="title" type="xsd:string" use="required" />
-	<xs:element name="booktitle" type="xsd:string" />
-	<xs:element name="journal" />
-	<xs:element name="year" type="xsd:integer" />
-	<xs:element name="volume" type="xsd:integer" />
-	<xs:element name="pages" type="xsd:string" />
-	<xs:element name="owner" type="xsd:string" />
-	<xs:element name="number" type="xsd:integer" />
-	<xs:element name="month"  type="xsd:string" />
-	<xs:element name="doi" use="required" >
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:pattern value="^[0-9]+.[0-9]+\/[a-zA-Z]+.[0-9]+.[0-9]+$" />
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:element>
-	<xs:element name="owner" type="xsd:string" use="required" />
-	<xs:element name="timestamp" type="xsd:date" use="required" />
+
 </xs:schema>
