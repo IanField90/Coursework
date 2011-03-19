@@ -3,9 +3,9 @@
 
 <xsl:output
 method="html"
-omit-xml-declaration="no"
+omit-xml-declaration="yes"
 doctype-public="-//W3C//DTD XHTML 1.1 Strict//EN"
-doctype-system="http://www.w3.org/TR/xhtml1/Dtd/xhtml1-transitional.dtd"
+doctype-system="http://www.w3.org/TR/xhtml1/Dtd/xhtml1-strict.dtd"
 indent="yes" />
 
 	<xsl:template match="/">
@@ -32,7 +32,7 @@ indent="yes" />
 							</tr>
 						</xsl:for-each>
 					</table>
-					<br/>
+					<br></br>
 				</xsl:for-each>
 			</body>
 		</html>
