@@ -3,7 +3,7 @@
 
 <citations xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xsi:noNamespaceSchemaLocation="citations.xsd">
-	<article>
+	<article name="Allen2005">
 		<author>
 			Allen, G. and Davis, K. and Goodale, T. and Hutanu, A. and Kaiser,
 			H. and Kielmann, T. and Merzky, A. and van Nieuwpoort, R. and Reinefeld,
@@ -24,7 +24,7 @@
 		<timestamp>2006-10-22</timestamp>
 	</article>
 
-	<article>
+	<article name="Baker2005">
 		<author>Baker, M. and Apon, A. and Ferner, C. and Brown, J.</author>
 		<title>Emerging grid standards</title>
 		<journal>Computer</journal>
@@ -38,7 +38,7 @@
 		<timestamp>2006-10-22</timestamp>
 	</article>
 
-	<inproceedings>
+	<inproceedings name="Boisseau2004">
 		<author>Boisseau, J.R.</author>
 		<title>UT Grid: a comprehensive campus cyberinfrastructure</title>
 		<booktitle>
@@ -53,7 +53,7 @@
 		<timestamp>2006-10-22</timestamp>
 	</inproceedings>
 
-	<inproceedings>
+	<inproceedings name="Brunie2003">
 		<author>
 			Brunie, L. and Miquel, M. and Pierson, J.-M. and Tchounikine, A.
 			and Dhaenens, C. and Melab, N. and Hameurlain, A. and Morvan, F.
@@ -74,7 +74,7 @@
 		<timestamp>2006-10-22</timestamp>
 	</inproceedings>
 
-	<inproceedings>
+	<inproceedings name="Cappello2005">
 		<author>
 			Cappello, F. and Caron, E. and Dayde, M. and Desprez, F. and Jegou,
 			Y. and Primet, P. and Jeannot, E. and Lanteri, S. and Leduc, J. and
