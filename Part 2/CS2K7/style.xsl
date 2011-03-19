@@ -1,117 +1,124 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-	<xsl:template match="/">
 
-		<HTML>
-			<HEAD>
-				<TITLE>Bibtex citations</TITLE>
-				<LINK rel="stylesheet" type="text/css" href="stylesheet.css" />
-			</HEAD>
-			<BODY>
+<xsl:output
+method="html"
+omit-xml-declaration="no"
+doctype-public="-//W3C//DTD XHTML 1.1 Strict//EN"
+doctype-system="http://www.w3.org/TR/xhtml1/Dtd/xhtml1-transitional.dtd"
+indent="yes" />
+
+	<xsl:template match="/">
+		<html xmlns="http://www.w3.org/1999/xhtml">
+			<head>
+				<title>Bibtex citations</title>
+				<link rel="stylesheet" type="text/css" href="stylesheet.css" />
+			</head>
+			<body>
 				<xsl:for-each select="citations/article">
-					<TABLE>
-						<TR>
-							<TH>Article entry:</TH>
-							<TH><xsl:value-of select="attribute::name" /></TH>
-						</TR>						
-						<TR>
-							<TD>Author</TD>
-							<TD><xsl:value-of select="author" /></TD>
-						</TR>
-						<TR>
-							<TD>Title</TD>
-							<TD><xsl:value-of select="title" /></TD>
-						</TR>
-						<TR>
-							<TD>Journal</TD>
-							<TD><xsl:value-of select="journal" /></TD>
-						</TR>
-						<TR>
-							<TD>Year</TD>
-							<TD><xsl:value-of select="year" /></TD>
-						</TR>
-						<TR>
-							<TD>Volume</TD>
-							<TD><xsl:value-of select="volume" /></TD>
-						</TR>
-						<TR>
-							<TD>Pages</TD>
-							<TD><xsl:value-of select="pages" /></TD>
-						</TR>
-						<TR>
-							<TD>Number</TD>
-							<TD><xsl:value-of select="number" /></TD>
-						</TR>
-						<TR>
-							<TD>Month</TD>
-							<TD><xsl:value-of select="month" /></TD>
-						</TR>
-						<TR>
-							<TD>DOI</TD>
-							<TD><xsl:value-of select="doi" /></TD>
-						</TR>
-						<TR>
-							<TD>Owner</TD>
-							<TD><xsl:value-of select="owner" /></TD>
-						</TR>
-						<TR>
-							<TD>Timestamp</TD>
-							<TD><xsl:value-of select="timestamp" /></TD>
-						</TR>
+					<table>
+						<tr>
+							<th>Article entry:</th>
+							<th><xsl:value-of select="attribute::name" /></th>
+						</tr>						
+						<tr>
+							<td>Author</td>
+							<td><xsl:value-of select="author" /></td>
+						</tr>
+						<tr>
+							<td>Title</td>
+							<td><xsl:value-of select="title" /></td>
+						</tr>
+						<tr>
+							<td>Journal</td>
+							<td><xsl:value-of select="journal" /></td>
+						</tr>
+						<tr>
+							<td>Year</td>
+							<td><xsl:value-of select="year" /></td>
+						</tr>
+						<tr>
+							<td>Volume</td>
+							<td><xsl:value-of select="volume" /></td>
+						</tr>
+						<tr>
+							<td>Pages</td>
+							<td><xsl:value-of select="pages" /></td>
+						</tr>
+						<tr>
+							<td>Number</td>
+							<td><xsl:value-of select="number" /></td>
+						</tr>
+						<tr>
+							<td>Month</td>
+							<td><xsl:value-of select="month" /></td>
+						</tr>
+						<tr>
+							<td>DOI</td>
+							<td><xsl:value-of select="doi" /></td>
+						</tr>
+						<tr>
+							<td>Owner</td>
+							<td><xsl:value-of select="owner" /></td>
+						</tr>
+						<tr>
+							<td>Timestamp</td>
+							<td><xsl:value-of select="timestamp" /></td>
+						</tr>
 						
-					</TABLE>
-					<BR />
+					</table>
+					<br />
 				</xsl:for-each>
 				
 				<xsl:for-each select="citations/inproceedings">
-					<TABLE>
-						<TR>
-							<TH>Inproceedings entry:</TH>
-							<TH><xsl:value-of select="attribute::name" /></TH>
-						</TR>						
-						<TR>
-							<TD>Author</TD>
-							<TD><xsl:value-of select="author" /></TD>
-						</TR>
-						<TR>
-							<TD>Title</TD>
-							<TD><xsl:value-of select="title" /></TD>
-						</TR>
-						<TR>
-							<TD>Booktitle</TD>
-							<TD><xsl:value-of select="booktitle" /></TD>
-						</TR>
-						<TR>
-							<TD>Year</TD>
-							<TD><xsl:value-of select="year" /></TD>
-						</TR>
-						<TR>
-							<TD>Pages</TD>
-							<TD><xsl:value-of select="pages" /></TD>
-						</TR>
-						<TR>
-							<TD>Month</TD>
-							<TD><xsl:value-of select="month" /></TD>
-						</TR>
-						<TR>
-							<TD>DOI</TD>
-							<TD><xsl:value-of select="doi" /></TD>
-						</TR>
-						<TR>
-							<TD>Owner</TD>
-							<TD><xsl:value-of select="owner" /></TD>
-						</TR>
-						<TR>
-							<TD>Timestamp</TD>
-							<TD><xsl:value-of select="timestamp" /></TD>
-						</TR>
+					<table>
+						<tr>
+							<th>Inproceedings entry:</th>
+							<th><xsl:value-of select="attribute::name" /></th>
+						</tr>						
+						<tr>
+							<td>Author</td>
+							<td><xsl:value-of select="author" /></td>
+						</tr>
+						<tr>
+							<td>Title</td>
+							<td><xsl:value-of select="title" /></td>
+						</tr>
+						<tr>
+							<td>Booktitle</td>
+							<td><xsl:value-of select="booktitle" /></td>
+						</tr>
+						<tr>
+							<td>Year</td>
+							<td><xsl:value-of select="year" /></td>
+						</tr>
+						<tr>
+							<td>Pages</td>
+							<td><xsl:value-of select="pages" /></td>
+						</tr>
+						<tr>
+							<td>Month</td>
+							<td><xsl:value-of select="month" /></td>
+						</tr>
+						<tr>
+							<td>DOI</td>
+							<td><xsl:value-of select="doi" /></td>
+						</tr>
+						<tr>
+							<td>Owner</td>
+							<td><xsl:value-of select="owner" /></td>
+						</tr>
+						<tr>
+							<td>Timestamp</td>
+							<td><xsl:value-of select="timestamp" /></td>
+						</tr>
 						
-					</TABLE>
-					<BR />
+					</table>
+					<br />
 				</xsl:for-each>
 
-			</BODY>
-		</HTML>
+			</body>
+		</html>
 	</xsl:template>
 
 </xsl:stylesheet>
