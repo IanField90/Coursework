@@ -1,68 +1,69 @@
 <?xml version="1.0"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:template match="/">
-		<html>
-			<head>
-				<title>Bibtex citations</title>
-				<link rel="stylesheet" type="text/css" href="stylesheet.css" />
-			</head>
-			<body>
+
+		<HTML>
+			<HEAD>
+				<TITLE>Bibtex citations</TITLE>
+				<LINK rel="stylesheet" type="text/css" href="stylesheet.css" />
+			</HEAD>
+			<BODY>
 				<xsl:for-each select="citations/article | citations/inproceedings">
-					<table border="1" width="80%">
-						<tr>
-							<th>Entry Type:</th>
-							<th><xsl:value-of select="parent::node/data"/></th>
-						</tr>						
-						<tr>
-							<td>Author</td>
-							<td><xsl:value-of select="author" /></td>
-						</tr>
-						<tr>
-							<td>Title</td>
-							<td><xsl:value-of select="title"/></td>
-						</tr>
-						<tr>
-							<td>Journal</td>
-							<td><xsl:value-of select="journal" /></td>
-						</tr>
-						<tr>
-							<td>Year</td>
-							<td><xsl:value-of select="year" /></td>
-						</tr>
-						<tr>
-							<td>Volume</td>
-							<td><xsl:value-of select="volume" /></td>
-						</tr>
-						<tr>
-							<td>Pages</td>
-							<td><xsl:value-of select="pages" /></td>
-						</tr>
-						<tr>
-							<td>Number</td>
-							<td><xsl:value-of select="number" /></td>
-						</tr>
-						<tr>
-							<td>Month</td>
-							<td><xsl:value-of select="month" /></td>
-						</tr>
-						<tr>
-							<td>DOI</td>
-							<td><xsl:value-of select="doi" /></td>
-						</tr>
-						<tr>
-							<td>Owner</td>
-							<td><xsl:value-of select="owner" /></td>
-						</tr>
-						<tr>
-							<td>Timestamp</td>
-							<td><xsl:value-of select="timestamp" /></td>
-						</tr>
+					<TABLE border="1" width="80%">
+						<TR>
+							<TH>Entry Type:</TH>
+							<TH><!--<xsl:value-of select="parent::node/data"/>--></TH>
+						</TR>						
+						<TR>
+							<TD>Author</TD>
+							<TD><xsl:value-of select="author" /></TD>
+						</TR>
+						<TR>
+							<TD>Title</TD>
+							<TD><xsl:value-of select="title"/></TD>
+						</TR>
+						<TR>
+							<TD>Journal</TD>
+							<TD><xsl:value-of select="journal" /></TD>
+						</TR>
+						<TR>
+							<TD>Year</TD>
+							<TD><xsl:value-of select="year" /></TD>
+						</TR>
+						<TR>
+							<TD>Volume</TD>
+							<TD><xsl:value-of select="volume" /></TD>
+						</TR>
+						<TR>
+							<TD>Pages</TD>
+							<TD><xsl:value-of select="pages" /></TD>
+						</TR>
+						<TR>
+							<TD>Number</TD>
+							<TD><xsl:value-of select="number" /></TD>
+						</TR>
+						<TR>
+							<TD>Month</TD>
+							<TD><xsl:value-of select="month" /></TD>
+						</TR>
+						<TR>
+							<TD>DOI</TD>
+							<TD><xsl:value-of select="doi" /></TD>
+						</TR>
+						<TR>
+							<TD>Owner</TD>
+							<TD><xsl:value-of select="owner" /></TD>
+						</TR>
+						<TR>
+							<TD>Timestamp</TD>
+							<TD><xsl:value-of select="timestamp" /></TD>
+						</TR>
 						
-					</table>
-					<br />
+					</TABLE>
+					<BR />
 				</xsl:for-each>
-			</body>
-		</html>
+			</BODY>
+		</HTML>
 	</xsl:template>
 
 </xsl:stylesheet>

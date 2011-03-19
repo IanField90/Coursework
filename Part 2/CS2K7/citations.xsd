@@ -1,32 +1,58 @@
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	elementFormDefault="qualified">
 	
-	<xs:annotation>
-		<xs:documentation xml:lang="en">
+	<xsd:annotation>
+		<xsd:documentation xml:lang="en">
 			Schema for CS2K7
-		</xs:documentation>
-	</xs:annotation>
+		</xsd:documentation>
+	</xsd:annotation>
 	
-	<xs:element name="citations" />
-	<xs:element name="article" />
-	<xs:element name="inproceedings" />
-	<xs:element name="author" type="xs:string" />					
-	<xs:element name="title" type="xs:string" />
-	<xs:element name="journal" type="xs:string" />
-	<xs:element name="year" type="xs:gYear" />
-	<xs:element name="volume" type="xs:integer" />
-	<xs:element name="pages" type="xs:string" />
-	<xs:element name="number" type="xs:integer" />
-	<xs:element name="month" type="xs:gMonth" />
-	<xs:element name="booktitle" type="xs:string" />
-	<xs:element name="doi" >
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:pattern value="[0-9]+.[0-9]+\/[a-zA-Z]+.[0-9]+.[0-9]+" />
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:element>
-	<xs:element name="owner" type="xs:string" />
-	<xs:element name="timestamp" type="xs:date" />
-	
-</xs:schema>
+	<xsd:element name="citations" />
+	<xsd:element name="article">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="author" type="xsd:string" />
+				<xsd:element name="title" type="xsd:string" />
+				<xsd:element name="journal" type="xsd:string" />
+				<xsd:element name="year" type="xsd:gYear" />
+				<xsd:element name="volume" type="xsd:integer" />
+				<xsd:element name="pages" type="xsd:string" />
+				<xsd:element name="number" type="xsd:integer" />
+				<xsd:element name="month" type="xsd:string" />
+				<xsd:element name="doi" >
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:pattern value="[0-9]+.[0-9]+\/[a-zA-Z]+.[0-9]+.[0-9]+" />
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="owner" type="xsd:string" />
+				<xsd:element name="timestamp" type="xsd:date" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+		
+	<xsd:element name="inproceedings">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="author" type="xsd:string" />
+				<xsd:element name="title" type="xsd:string" />
+				<xsd:element name="booktitle" type="xsd:string" />
+				<xsd:element name="year" type="xsd:gYear" />
+				<xsd:element name="pages" type="xsd:string" />
+				<xsd:element name="month" type="xsd:string" />
+				<xsd:element name="doi" >
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:pattern value="[0-9]+.[0-9]+\/[a-zA-Z]+.[0-9]+.[0-9]+" />
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="owner" type="xsd:string" />
+				<xsd:element name="timestamp" type="xsd:date" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+</xsd:schema>

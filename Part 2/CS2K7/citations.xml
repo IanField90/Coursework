@@ -2,7 +2,7 @@
 <?xml-stylesheet type="text/xsl" href="style.xsl"?>
 
 <citations xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xsi:noNamespaceSchemaLocation="citations.xsd" >
+	xsi:noNamespaceSchemaLocation="citations.xsd">
 	<article>
 		<author>
 			Allen, G. and Davis, K. and Goodale, T. and Hutanu, A. and Kaiser,
@@ -21,7 +21,7 @@
 		<month>Mar</month>
 		<doi>10.1109/JPROC.2004.842755</doi>
 		<owner>mab</owner>
-		<timestamp>2006.10.22</timestamp>
+		<timestamp>2006-10-22</timestamp>
 	</article>
 
 	<article>
@@ -35,7 +35,7 @@
 		<month>April</month>
 		<doi>10.1109/MC.2005.124</doi>
 		<owner>mab</owner>
-		<timestamp>2006.10.22</timestamp>
+		<timestamp>2006-10-22</timestamp>
 	</article>
 
 	<inproceedings>
@@ -50,7 +50,7 @@
 		<month>4-6 June</month>
 		<doi>10.1109/HPDC.2004.1323590</doi>
 		<owner>mab</owner>
-		<timestamp>2006.10.22</timestamp>
+		<timestamp>2006-10-22</timestamp>
 	</inproceedings>
 
 	<inproceedings>
@@ -71,7 +71,7 @@
 		<month>1-5 Sept.</month>
 		<doi>10.1109/DEXA.2003.1232074</doi>
 		<owner>mab</owner>
-		<timestamp>2006.10.22</timestamp>
+		<timestamp>2006-10-22</timestamp>
 	</inproceedings>
 
 	<inproceedings>
@@ -91,6 +91,6 @@
 		<month>13-14 Nov.</month>
 		<doi>10.1109/GRID.2005.1542730</doi>
 		<owner>mab</owner>
-		<timestamp>2006.10.22</timestamp>
+		<timestamp>2006-10-22</timestamp>
 	</inproceedings>
 </citations>
