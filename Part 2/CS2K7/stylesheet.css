@@ -1,11 +1,9 @@
-.body{
-	
+table {
+	text-align: center;
+	border-collapse: collapse;
+	width: auto;
 }
 
-table {
-	border-color: #000000;
-	border-spacing: 2px 2px;
-	text-align: center;
-	padding: 0px 0px 0px 0px;
-	border-collapse: collapse;
+th,td {
+	border: 1px solid #000000;
 }

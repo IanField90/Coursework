@@ -9,7 +9,7 @@
 			</HEAD>
 			<BODY>
 				<xsl:for-each select="citations/article">
-					<TABLE border="1" width="auto">
+					<TABLE>
 						<TR>
 							<TH>Article entry:</TH>
 							<TH><xsl:value-of select="attribute::name" /></TH>
@@ -64,7 +64,7 @@
 				</xsl:for-each>
 				
 				<xsl:for-each select="citations/inproceedings">
-					<TABLE border="1" width="80%">
+					<TABLE>
 						<TR>
 							<TH>Inproceedings entry:</TH>
 							<TH><xsl:value-of select="attribute::name" /></TH>
