@@ -11,10 +11,20 @@ float* makeGrid(){
 	 int index;
 	 float *ret;
 	 ret = (float*)malloc(sizeof(float) * NUM_ROWS * NUM_COLLUMNS);
-	 for (index=0; index<(NUM_ROWS * NUM_COLLUMNS); index++) {
+	 for (index = 0; index < (NUM_ROWS * NUM_COLLUMNS); index++) {
 		 ret[index] = 0; //initialise all initial temperatures to zero
 	 }
 	 return ret;
+}
+
+float* makeSection(int NoProc){
+	int index;
+	float *ret;
+	ret = (float*)malloc(sizeof(float) * NUM_COLLUMNS / NoProc);
+	for (index = 0; index < (NUM_COLLUMNS / NoProc); index++){
+		ret[index] = 0; //initialise all allocated memory to 0
+	}
+	return ret;
 }
 
 void setFixedTemp(float *grid){
@@ -27,7 +37,7 @@ float calcTemp(float orig, float top, float left, float right, float bottom){
 
 int main(int argc, char **argv) {
 	int NoProc, ID, Num, i, j;
-	float *grid; 
+	float *grid, *recBuff, *sendBuff; 
 	MPI_Status Status;
 	
 	MPI_Init(&argc,&argv);	
@@ -40,18 +50,18 @@ int main(int argc, char **argv) {
 		setFixedTemp(grid); //top left of grid temperature 5
 	}
 	
+	//all nodes have their own section
+	recBuff = makeSection(NoProc);
+	sendBuff = makeSection(NoProc);
 	
-	/*
-	//Main program loop
 	for(i = 0; i < NUM_TIME_STEPS; i++){
-		//Send proportion of buffer to each node
-		//ID * (NUM_ROWS / NoProc); //start
-		//ID+1 * (NUM_ROWS / NoProc); //finish data set
-		for(j = 0; j < NUM_COLLUMNS; j++){
-			
-		}
+		//Send out 
+		MPI_Scatter(grid, NUM_COLLUMNS / NoProc, MPI_FLOAT, 
+					recBuff, NUM_COLLUMNS / NoProc, MPI_FLOAT, 
+					0, MPI_COMM_WORLD);
+		
+		//get back in root node
 	}
-	*/
 	//free memory again
 	free(grid);
 	MPI_Finalize();
