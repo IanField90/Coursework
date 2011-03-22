@@ -4,27 +4,17 @@
 #include <mpi.h>
 
 #define NUM_ROWS 50 //20k
-#define NUM_COLLUMNS 50 //5k
+#define NUM_COLUMNS 50 //5k
 #define NUM_TIME_STEPS 1000
 
-float* makeGrid(){
+float* makeBuff(int rows, int columns){
 	 int index;
 	 float *ret;
-	 ret = (float*)malloc(sizeof(float) * NUM_ROWS * NUM_COLLUMNS);
-	 for (index = 0; index < (NUM_ROWS * NUM_COLLUMNS); index++) {
+	 ret = (float*)malloc(sizeof(float) * rows * columns);
+	 for (index = 0; index < (rows * columns); index++) {
 		 ret[index] = 0; //initialise all initial temperatures to zero
 	 }
 	 return ret;
-}
-
-float* makeSection(int NoProc){
-	int index;
-	float *ret;
-	ret = (float*)malloc(sizeof(float) * NUM_COLLUMNS / NoProc);
-	for (index = 0; index < (NUM_COLLUMNS / NoProc); index++){
-		ret[index] = 0; //initialise all allocated memory to 0
-	}
-	return ret;
 }
 
 void setFixedTemp(float *grid){
@@ -37,7 +27,8 @@ float calcTemp(float orig, float top, float left, float right, float bottom){
 
 int main(int argc, char **argv) {
 	int NoProc, ID, Num, i, j;
-	float *grid, *recBuff, *sendBuff; 
+	float *grid, *recBuff, *sendBuff;
+	float *zeroCol;
 	MPI_Status Status;
 	
 	MPI_Init(&argc,&argv);	
@@ -46,21 +37,45 @@ int main(int argc, char **argv) {
 	
 	//If the root node
 	if(ID == 0){
-		grid = makeGrid(); // Get the grid memory
+		grid = makeBuff(NUM_ROWS, NUM_COLUMNS); // Get the grid memory
 		setFixedTemp(grid); //top left of grid temperature 5
+		//all nodes have their own section
+		recBuff = makeBuff(NUM_ROWS, NUM_COLUMNS / NoProc);
 	}
 	
-	//all nodes have their own section
-	recBuff = makeSection(NoProc);
-	sendBuff = makeSection(NoProc);
+	sendBuff = makeBuff(NUM_ROWS, NUM_COLUMNS / NoProc);
 	
 	for(i = 0; i < NUM_TIME_STEPS; i++){
-		//Send out 
-		MPI_Scatter(grid, NUM_COLLUMNS / NoProc, MPI_FLOAT, 
-					recBuff, NUM_COLLUMNS / NoProc, MPI_FLOAT, 
+		//Send out from root node
+		MPI_Scatter(grid, NUM_COLUMNS / NoProc, MPI_FLOAT, 
+					recBuff, NUM_COLUMNS / NoProc, MPI_FLOAT, 
 					0, MPI_COMM_WORLD);
+				
+		//Top and bottom rows always 0
+		//Left and right values relative to the COLUMNS
+		//"leftmost" node
+		if(ID == 0){
+			if(ID+1 <= NoProc){
+				//Left = column of 0's
+				//Right =
+				grid[0][ID+1 * (NUM_COLLUNS / NoProc)]);
+			}
+		}
 		
-		//get back in root node
+		//Rightmost node
+		if(ID == NoProc-1){
+			if(ID-1 >= 0){
+				
+			}
+		}
+		
+		//All nodes get the same top and bottom fillers (0 temp)
+		
+					  
+		//Receive at root node
+		MPI_Gather(sendBuff, NUM_COLUMNS / NoProc, MPI_FLOAT,
+				   grid, NUM_COLUMNS / NoProc, MPI_FLOAT,
+				   0, MPI_COMM_WORLD);
 	}
 	//free memory again
 	free(grid);
