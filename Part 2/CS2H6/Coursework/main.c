@@ -7,28 +7,31 @@
 #define NUM_COLUMNS 50 //5k
 #define NUM_TIME_STEPS 1000
 
-float* makeBuff(int rows, int columns){
-	 int index;
-	 float *ret;
-	 ret = (float*)malloc(sizeof(float) * rows * columns);
-	 for (index = 0; index < (rows * columns); index++) {
-		 ret[index] = 0; //initialise all initial temperatures to zero
-	 }
-	 return ret;
+//2D array of reservations, calloc inits to 0
+float** makeBuff(int rows, int columns){
+	int i;
+	float** ret;
+	ret = (float**) calloc(columns, sizeof(float));
+	for(i=0; i<columns; i++){
+		ret[i] = (float*) calloc(rows, sizeof(float));
+	}
+	return ret;
 }
 
-void setFixedTemp(float *grid){
+//Top left is 5.0
+void setFixedTemp(float **grid){
 	grid[0][0] = 5.0;
 }
 
-float calcTemp(float orig, float top, float left, float right, float bottom){
-	return orig + top + left + right + bottom / 5;
+//Average temp of surrounding 'atoms'
+float calcTemp(float o, float t, float l, float r, float b, int divisor){
+	return o + t + l + r + b / divisor;
 }
 
 int main(int argc, char **argv) {
-	int NoProc, ID, Num, i, j;
-	float *grid, *recBuff, *sendBuff;
-	float *zeroCol;
+	int NoProc, ID, Num, i, j, k;
+	int divisor, curVal, topVal, leftVal, rightVal, bottomVal;
+	float **grid, **recBuff, **sendBuff;
 	MPI_Status Status;
 	
 	MPI_Init(&argc,&argv);	
@@ -38,11 +41,10 @@ int main(int argc, char **argv) {
 	//If the root node
 	if(ID == 0){
 		grid = makeBuff(NUM_ROWS, NUM_COLUMNS); // Get the grid memory
-		setFixedTemp(grid); //top left of grid temperature 5
-		//all nodes have their own section
-		recBuff = makeBuff(NUM_ROWS, NUM_COLUMNS / NoProc);
+		setFixedTemp(grid);
 	}
-	
+	//Each node has T-1 and T buffers
+	recBuff = makeBuff(NUM_ROWS, NUM_COLUMNS / NoProc);
 	sendBuff = makeBuff(NUM_ROWS, NUM_COLUMNS / NoProc);
 	
 	for(i = 0; i < NUM_TIME_STEPS; i++){
@@ -50,34 +52,104 @@ int main(int argc, char **argv) {
 		MPI_Scatter(grid, NUM_COLUMNS / NoProc, MPI_FLOAT, 
 					recBuff, NUM_COLUMNS / NoProc, MPI_FLOAT, 
 					0, MPI_COMM_WORLD);
+		
+		//Traverse across entire section's array
+		//Do calculation. j = Current column, k = Current row
+		for(j = 0; j < NUM_COLUMNS / NoProc; j++){
+			for(k = 0; k < NUM_ROWS; k++){
+				divisor = 5;
 				
-		//Top and bottom rows always 0
-		//Left and right values relative to the COLUMNS
-		//"leftmost" node
-		if(ID == 0){
-			if(ID+1 <= NoProc){
-				//Left = column of 0's
-				//Right =
-				grid[0][ID+1 * (NUM_COLLUNS / NoProc)]);
+				//Left node's top, bottom and grid's left corners
+				if(ID == 0){
+					if(k == 0){
+						//top row
+						divisor--;
+						topVal = -1;
+					}
+					if(k == NUM_ROWS - 1){
+						//bottom row
+						divisor--;
+						bottomVal = -1;
+					}
+					if(j == 0){
+						//left column
+						divisor--;
+						leftVal = -1;
+					}
+					//corners accounted for
+				}
+				//Right node's top, bottom and grid's right corners
+				if(ID == NoProc - 1){
+					if(k == 0){
+						//top row
+						divisor--;
+						topVal = -1;
+					}
+					if(k == NUM_ROWS - 1){
+						//bottom row
+						divisor--;
+						bottomVal = -1;
+					}
+					if(j == NUM_COLUMNS / NoProc - 1){
+						//right column
+						divisor--;
+						rightVal = -1;
+					}
+					//corners accounted for
+				}
+				
+				//Do calculation
+				if(topVal == -1){
+					topVal = 0;
+				}else{
+					topVal = recBuff[k-1][j];
+				}
+				
+				if(leftVal == -1){
+					leftVal = 0;
+				}else{
+					leftVal = recBuff[k][j-1];
+				}
+				
+				if(bottomVal == -1){
+					bottomVal = 0;
+				}else{
+					bottomVal = recBuff[k+1][j];
+				}
+				
+				if(rightVal == -1){
+					rightVal = 0;
+				}else{
+					rightVal = recBuff[k][j+1];
+				}
+				
+				curVal = recBuff[k][j];
+				sendBuff[k][j] = calcTemp(curVal, topVal, leftVal, bottomVal, rightVal, divisor);
 			}
 		}
 		
-		//Rightmost node
-		if(ID == NoProc-1){
-			if(ID-1 >= 0){
-				
-			}
-		}
-		
-		//All nodes get the same top and bottom fillers (0 temp)
-		
-					  
 		//Receive at root node
 		MPI_Gather(sendBuff, NUM_COLUMNS / NoProc, MPI_FLOAT,
 				   grid, NUM_COLUMNS / NoProc, MPI_FLOAT,
 				   0, MPI_COMM_WORLD);
 	}
-	//free memory again
+	// print results
+	if(ID == 0){
+		//print
+		printf("Results!\n");
+		
+		for(j = 0; j < NUM_ROWS; j++){
+			for(k = 0; k < NUM_COLUMNS; k++){
+				printf("%1.2f ", grid[j][k]);
+			}
+			printf("\n");
+		}
+		printf("End of Results!\n");
+	}
+	
+	//Free memory again
 	free(grid);
+	free(recBuff);
+	free(sendBuff);
 	MPI_Finalize();
 }

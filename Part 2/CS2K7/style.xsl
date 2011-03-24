@@ -7,7 +7,6 @@ omit-xml-declaration="yes"
 doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
 doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
 indent="yes" />
-
 	<xsl:template match="/">
 		<html xmlns="http://www.w3.org/1999/xhtml">
 			<head>
@@ -19,12 +18,8 @@ indent="yes" />
 				<xsl:for-each select="citations/*">
 					<table cellpadding="3" border="2">
 						<tr>
-							<th>
-								<xsl:value-of select ="local-name()"/> entry:
-							</th>
-							<th>
-								<xsl:value-of select="@name"/>
-							</th>
+							<th><xsl:value-of select ="local-name()"/> entry:</th>
+							<th><xsl:value-of select="@name"/></th>
 						</tr>
 						<xsl:for-each select="*">
 							<tr>
@@ -38,5 +33,4 @@ indent="yes" />
 			</body>
 		</html>
 	</xsl:template>
-
 </xsl:stylesheet>
