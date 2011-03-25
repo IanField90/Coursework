@@ -75,6 +75,34 @@ int main(int argc, char **argv) {
 		leftCol = makeCol();
 		rightCol = makeCol();
 		//TODO Send to each node the left and right columns
+		//Right = Col(NUM_COLUMNS / NoProc * ID+1)
+		//Left = Col(NUM_COLUMNS / NoProc * ID -1)
+		for(j = 0; j < NoProc; j++){
+			//Send
+			if(NoProc > 1){
+				if(ID == 0){
+					if(j != NoProc-1){
+						//don't send right to right node
+						MPI_Send(grid[(NUM_COLUMNS / NoProc) * (j+1)], 
+								 NUM_ROWS, MPI_FLOAT, j, 0, MPI_COMM_WORLD);
+					}
+					MPI_Send(grid[((NUM_COLUMNS / NoProc) * j) - 1], 
+							 NUM_ROWS, MPI_FLOAT, j, 0, MPI_COMM_WORLD);
+					MPI_Recv(rightCol, NUM_ROWS, MPI_FLOAT, 0, 
+							 MPI_ANY_TAG, MPI_COMM_WORLD, &Status);
+				}else if(ID == NoProc-1){
+					//right node only takes left
+					MPI_Recv(leftCol, NUM_ROWS, MPI_FLOAT, 0, 
+							 MPI_ANY_TAG, MPI_COMM_WORLD, &Status);
+				}else{
+					//middle nodes
+					MPI_Recv(rightCol, NUM_ROWS, MPI_FLOAT, 0, 
+							 MPI_ANY_TAG, MPI_COMM_WORLD, &Status);
+					MPI_Recv(leftCol, NUM_ROWS, MPI_FLOAT, 0, 
+							 MPI_ANY_TAG, MPI_COMM_WORLD, &Status);
+				}
+			}
+		}
 		
 		//Traverse across entire section's array
 		//Do calculation. j = Current column, k = Current row
