@@ -8,12 +8,30 @@
 #define NUM_TIME_STEPS 1000
 
 //2D array of reservations, calloc inits to 0
-float** makeBuff(int rows, int columns){
+float** makeBuff(int columns, int rows){
 	int i;
 	float** ret;
-	ret = (float**) calloc(columns, sizeof(float));
-	for(i=0; i<columns; i++){
-		ret[i] = (float*) calloc(rows, sizeof(float));
+	ret = (float**) calloc(rows, sizeof(float*));
+	if(ret == NULL){
+		printf("Row alloc fault\n");
+	}
+	else{
+		for(i = 0; i<rows; i++){
+			ret[i] = (float*) calloc(columns, sizeof(float));
+			if(ret[i] == NULL){
+				printf("Column alloc fault\n");
+			}
+		}
+	}
+	return ret;
+}
+
+//a single column
+float* makeCol(){
+	float* ret;
+	ret = (float*)calloc(NUM_ROWS, sizeof(float));
+	if(ret == NULL){
+		printf("Inner column alloc failure");
 	}
 	return ret;
 }
@@ -25,13 +43,14 @@ void setFixedTemp(float **grid){
 
 //Average temp of surrounding 'atoms'
 float calcTemp(float o, float t, float l, float r, float b, int divisor){
-	return o + t + l + r + b / divisor;
+	return (o + t + l + r + b) / (float)divisor;
 }
 
 int main(int argc, char **argv) {
-	int NoProc, ID, Num, i, j, k;
-	int divisor, curVal, topVal, leftVal, rightVal, bottomVal;
+	int NoProc, ID, i, j, k, divisor;
+	float curVal, topVal, leftVal, rightVal, bottomVal;
 	float **grid, **recBuff, **sendBuff;
+	float *leftCol = NULL, *rightCol = NULL;
 	MPI_Status Status;
 	
 	MPI_Init(&argc,&argv);	
@@ -52,6 +71,10 @@ int main(int argc, char **argv) {
 		MPI_Scatter(grid, NUM_COLUMNS / NoProc, MPI_FLOAT, 
 					recBuff, NUM_COLUMNS / NoProc, MPI_FLOAT, 
 					0, MPI_COMM_WORLD);
+		
+		leftCol = makeCol();
+		rightCol = makeCol();
+		//TODO Send to each node the left and right columns
 		
 		//Traverse across entire section's array
 		//Do calculation. j = Current column, k = Current row
@@ -105,23 +128,38 @@ int main(int argc, char **argv) {
 					topVal = recBuff[k-1][j];
 				}
 				
-				if(leftVal == -1){
-					leftVal = 0;
-				}else{
-					leftVal = recBuff[k][j-1];
-				}
-				
 				if(bottomVal == -1){
 					bottomVal = 0;
 				}else{
 					bottomVal = recBuff[k+1][j];
 				}
+
+				//TODO 'inner edges' not if -1 as that is 
+				if(leftVal == -1){
+					leftVal = 0;
+				}else{
+					//left inner
+					if(j == 0){
+						//get value from leftCol
+						//leftVal = leftCol[k];
+					}else{
+						leftVal = recBuff[k][j-1];
+					}
+				}
+				
 				
 				if(rightVal == -1){
 					rightVal = 0;
 				}else{
-					rightVal = recBuff[k][j+1];
+					//right inner
+					if(j == NUM_COLUMNS / NoProc - 1){
+						//getValue from rightCol
+						//rightVal = rightCol[k];
+					}else{
+						rightVal = recBuff[k][j+1];
+					}
 				}
+				
 				
 				curVal = recBuff[k][j];
 				sendBuff[k][j] = calcTemp(curVal, topVal, leftVal, bottomVal, rightVal, divisor);
@@ -149,7 +187,22 @@ int main(int argc, char **argv) {
 	
 	//Free memory again
 	free(grid);
-	free(recBuff);
-	free(sendBuff);
+	if(sendBuff != NULL){
+		for(i = 0; i < NUM_ROWS; i++){
+			if(sendBuff[i] != NULL){
+				free(sendBuff[i]);
+			}
+		}
+		free(sendBuff);
+	}
+	if(recBuff != NULL){
+		//Free memory again
+		for(i = 0; i < NUM_ROWS; i++){
+			if(recBuff[i] != NULL){
+				free(recBuff[i]);
+			}
+		}
+		free(recBuff);
+	}
 	MPI_Finalize();
 }
