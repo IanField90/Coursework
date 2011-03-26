@@ -33,7 +33,7 @@ double** makeBuff(int columns, int rows){
 
 //a single column
 double* makeCol(){
-	float* ret;
+	double* ret;
 	ret = (double*)calloc(NUM_ROWS, sizeof(double));
 	if(ret == NULL){
 		return NULL;
@@ -183,24 +183,11 @@ int main(int argc, char **argv) {
 	}
 	
 	/*## Free memory again ##*/
-	//TODO sort
+	free(leftCol);
+	free(rightCol);
+	for(i = 0; i < NUM_ROWS; i++){
+		free(grid[i]);
+	}
 	free(grid);
-	if(sendBuff != NULL){
-		for(i = 0; i < NUM_ROWS; i++){
-			if(sendBuff[i] != NULL){
-				free(sendBuff[i]);
-			}
-		}
-		free(sendBuff);
-	}
-	if(recBuff != NULL){
-		//Free memory again
-		for(i = 0; i < NUM_ROWS; i++){
-			if(recBuff[i] != NULL){
-				free(recBuff[i]);
-			}
-		}
-		free(recBuff);
-	}
 	MPI_Finalize();
 }
