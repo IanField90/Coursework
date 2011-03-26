@@ -96,12 +96,11 @@ int main(int argc, char **argv) {
 			}
 		}
 		printf("Receive complete on ID: %d\n", ID);
-		
+		//TODO double check that the j and k indexes for arrays are correct ones
 		//Traverse across entire section's array
 		//Do calculation. j = Current column, k = Current row
 		for(j = 0; j < NUM_COLUMNS / NoProc; j++){
 			for(k = 0; k < NUM_ROWS; k++){
-				divisor = 5;
 				/*## START edges ##*/
 				//only left and right nodes have left and right edges
 				if(ID == 0){
@@ -163,8 +162,13 @@ int main(int argc, char **argv) {
 				}
 				
 				curVal = grid[k][j];
-				grid_new[k][j] = calcTemp(curVal, topVal, leftVal, bottomVal, rightVal, divisor);
-				//TODO update 'grid' to have 'grid_new' value
+				grid_new[k][j] = calcTemp(curVal, topVal, leftVal, bottomVal, rightVal);
+			}
+		}
+		// update 'grid' to have 'grid_new' value
+		for(j = 0; j < NUM_COLUMNS / NoProc; j++){
+			for(k = 0; k < NUM_ROWS; k++){
+				grid[k][j] = grid_new[k][j];
 			}
 		}
 	}

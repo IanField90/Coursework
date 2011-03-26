@@ -1,23 +1,26 @@
 //  Created by Ian Field on 16/03/2011.
 #include <stdio.h>
 #include <stdlib.h>
-//#include <mpi.h>
 
 #define NUM_ROWS 4 //20k
 #define NUM_COLUMNS 5 //5k
-#define NUM_TIME_STEPS 1
+#define NUM_TIME_STEPS 10
+#define TOP_TEMP 100
+#define LEFT_TEMP 100
+#define BOTTOM_TEMP 100
+#define RIGHT_TEMP 100
 
 //2D array of reservations, calloc inits to 0
-float** makeBuff(int columns, int rows){
+double** makeBuff(int columns, int rows){
 	int i;
-	float** ret;
-	ret = (float**) calloc(rows, sizeof(float*));
+	double** ret;
+	ret = (double**) calloc(rows, sizeof(double*));
 	if(ret == NULL){
 		printf("Row alloc fault\n");
 	}
 	else{
 		for(i = 0; i<rows; i++){
-			ret[i] = (float*) calloc(columns, sizeof(float));
+			ret[i] = (double*) calloc(columns, sizeof(double));
 				if(ret[i] == NULL){
 					printf("Column alloc fault\n");
 				}
@@ -26,85 +29,75 @@ float** makeBuff(int columns, int rows){
 	return ret;
 }
 
-//Top left is 5.0
-void setFixedTemp(float **grid){
-	grid[0][0] = 5.0;
-}
-
 //Average temp of surrounding 'atoms'
-float calcTemp(float o, float t, float l, float r, float b, int divisor){
-	return (o + t + l + r + b) / (float)divisor;
+double calcTemp(double o, double t, double l, double r, double b){
+	return (o + t + l + r + b) / (double)5;
 }
 
 int main(int argc, char **argv) {
 	int divisor, i, j, k;
-	float curVal, topVal, leftVal, rightVal, bottomVal;
-	float **recBuff, **sendBuff;
-	printf("about to allocate recBuff\n");
-	recBuff = makeBuff(NUM_COLUMNS, NUM_ROWS);
-	printf("about to allocate sendBuff\n");
-	sendBuff = makeBuff(NUM_COLUMNS, NUM_ROWS);
-	setFixedTemp(recBuff);
+	double curVal, topVal, leftVal, rightVal, bottomVal;
+	double **grid, **grid_new;
+	printf("about to allocate grid\n");
+	grid = makeBuff(NUM_COLUMNS, NUM_ROWS);
+	printf("about to allocate grid_new\n");
+	grid_new = makeBuff(NUM_COLUMNS, NUM_ROWS);
 	
 	//j column, k row
 	for(i = 0; i < NUM_TIME_STEPS; i++){
 		for(j = 0; j < NUM_COLUMNS; j++){
 			for(k = 0; k < NUM_ROWS; k++){
-				divisor = 5;
-				if(k == 0){
-					//top row
-					divisor--;
+					if(j == 0){
+						leftVal = -1;
+					}
+					if(j == (NUM_COLUMNS) - 1){
+						rightVal = -1;
+					}
+				//all nodes have top and bottom edges
+				if(k==0){
 					topVal = -1;
 				}
-				if(j == 0){
-					//left column
-					divisor--;
-					leftVal = -1;
-				}
-				if(k == NUM_ROWS - 1){
-					//bottom row
-					divisor--;
+				if(k == NUM_ROWS -1){
 					bottomVal = -1;
 				}
-				if(j == NUM_COLUMNS - 1){
-					//right column
-					divisor--;
-					rightVal = -1;
-				}
-				//corners accounted for
-
-	 
+				/*## END edges ##*/
+				
 				//Do calculation
 				if(topVal == -1){
-					topVal = 0;
+					topVal = TOP_TEMP;
 				}else{
-					topVal = recBuff[k-1][j];
-				}
-				
-				if(leftVal == -1){
-					leftVal = 0;
-				}else{
-					leftVal = recBuff[k][j-1];
+					topVal = grid[k-1][j];
 				}
 				
 				if(bottomVal == -1){
-					bottomVal = 0;
+					bottomVal = BOTTOM_TEMP;
 				}else{
-					bottomVal = recBuff[k+1][j];
+					bottomVal = grid[k+1][j];
 				}
+				
+				if(leftVal == -1){
+					leftVal = LEFT_TEMP;//only on left node
+				}else{
+					//left inner
+					leftVal = grid[k][j-1];
+				}
+				
 				
 				if(rightVal == -1){
-					rightVal = 0;
+					rightVal = RIGHT_TEMP;//only on right node
 				}else{
-					rightVal = recBuff[k][j+1];
+					rightVal = grid[k][j+1];
 				}
 				
-				curVal = recBuff[k][j];
-				sendBuff[k][j] = calcTemp(curVal, topVal, leftVal, bottomVal, rightVal, divisor);
+				curVal = grid[k][j];
+				grid_new[k][j] = calcTemp(curVal, topVal, leftVal, bottomVal, rightVal);
 				
 			}
-			setFixedTemp(sendBuff);
-			setFixedTemp(recBuff);
+		}
+		for(j = 0; j < NUM_COLUMNS; j++){
+			for(k = 0; k < NUM_ROWS; k++){
+				grid[k][j] = grid_new[k][j];
+			}
 		}
 	}
 
@@ -114,28 +107,28 @@ int main(int argc, char **argv) {
 	
 	for(j = 0; j < NUM_COLUMNS; j++){
 		for(k = 0; k < NUM_ROWS; k++){
-			printf("%1.2f ", sendBuff[k][j]);
+			printf("%1.2f ", grid_new[k][j]);
 		}
 		printf("\n");
 	}
 	printf("End of Results!\n");
 	
-	if(sendBuff != NULL){
+	if(grid_new != NULL){
 		for(i = 0; i < NUM_ROWS; i++){
-			if(sendBuff[i] != NULL){
-				free(sendBuff[i]);
+			if(grid_new[i] != NULL){
+				free(grid_new[i]);
 			}
 		}
-		free(sendBuff);
+		free(grid_new);
 	}
-	if(recBuff != NULL){
+	if(grid != NULL){
 		//Free memory again
 		for(i = 0; i < NUM_ROWS; i++){
-			if(recBuff[i] != NULL){
-				free(recBuff[i]);
+			if(grid[i] != NULL){
+				free(grid[i]);
 			}
 		}
-		free(recBuff);
+		free(grid);
 	}
 	return 0;
 }
