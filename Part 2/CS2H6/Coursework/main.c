@@ -5,7 +5,7 @@
 
 #define NUM_ROWS 50 //20k
 #define NUM_COLUMNS 50 //5k
-#define NUM_TIME_STEPS 1000
+#define NUM_TIME_STEPS 4
 //TODO check temps
 #define TOP_TEMP 100
 #define LEFT_TEMP 100
@@ -46,22 +46,27 @@ double calcTemp(double o, double t, double l, double r, double b){
 	return (o + t + l + r + b) / 5;
 }
 
+//BUG - Every ID-1th Column is 0.00
+
 int main(int argc, char **argv) {
 	int NoProc, ID, i, j, k, divisor;
 	double curVal, topVal, leftVal, rightVal, bottomVal;
 	double **grid, **grid_new;
 	double *leftCol = NULL, *rightCol = NULL;
+	int wait;
 	MPI_Status Status;
 	
 	MPI_Init(&argc,&argv);	
 	MPI_Comm_size(MPI_COMM_WORLD, &NoProc); 
 	MPI_Comm_rank(MPI_COMM_WORLD, &ID);
 	
-	grid = makeBuff(NUM_ROWS, NUM_COLUMNS); // Get the grid memory
+	grid = makeBuff(NUM_COLUMNS/NoProc, NUM_ROWS); // Get the grid memory
+	grid_new = makeBuff(NUM_COLUMNS/NoProc, NUM_ROWS); //get grid memory again
 	leftCol = makeCol(); //reserve left col
 	rightCol = makeCol(); //reserve right col
-	if(grid == NULL || rightCol == NULL || leftCol == NULL){
+	if(grid == NULL || rightCol == NULL || leftCol == NULL || grid_new == NULL){
 		printf("Memory allocation faliure! Fatal.\n");
+		return -1;
 	}
 	
 	for(i = 0; i < NUM_TIME_STEPS; i++){
@@ -69,7 +74,7 @@ int main(int argc, char **argv) {
 		if(NoProc > 1){
 			if(ID == 0){
 				//send right col
-				MPI_Send(grid[NUM_COLUMNS/NoProc], 
+				MPI_Send(grid[(NUM_COLUMNS/NoProc)-1], 
 						 NUM_ROWS, MPI_DOUBLE, ID+1, 0, MPI_COMM_WORLD);
 				//recv right col
 				MPI_Recv(rightCol, NUM_ROWS, 
@@ -88,18 +93,17 @@ int main(int argc, char **argv) {
 				MPI_Send(grid[0], NUM_ROWS, MPI_DOUBLE, ID-1, 0, MPI_COMM_WORLD);
 
 				//send right col
-				MPI_Send(grid[NUM_COLUMNS/NoProc], 
+				MPI_Send(grid[(NUM_COLUMNS/NoProc)-1], 
 						 NUM_ROWS, MPI_DOUBLE, ID + 1, 0, MPI_COMM_WORLD);
 				//recv right col
 				MPI_Recv(rightCol, NUM_ROWS, 
 						 MPI_DOUBLE,  ID+1, MPI_ANY_TAG, MPI_COMM_WORLD, &Status);
 			}
 		}
-		printf("Receive complete on ID: %d\n", ID);
-		//TODO double check that the j and k indexes for arrays are correct ones
+
 		//Traverse across entire section's array
 		//Do calculation. j = Current column, k = Current row
-		for(j = 0; j < NUM_COLUMNS / NoProc; j++){
+		for(j = 0; j < (NUM_COLUMNS / NoProc); j++){
 			for(k = 0; k < NUM_ROWS; k++){
 				/*## START edges ##*/
 				//only left and right nodes have left and right edges
@@ -122,7 +126,6 @@ int main(int argc, char **argv) {
 				}
 				/*## END edges ##*/
 				
-				printf("At Calculation on %d\n", ID);	
 				//Do calculation
 				if(topVal == -1){
 					topVal = TOP_TEMP;
@@ -148,12 +151,11 @@ int main(int argc, char **argv) {
 					}
 				}
 				
-				
 				if(rightVal == -1){
 					rightVal = RIGHT_TEMP;//only on right node
 				}else{
 					//right inner
-					if(j == NUM_COLUMNS / NoProc - 1){
+					if(j == (NUM_COLUMNS / NoProc) - 1){
 						//getValue from rightCol
 						rightVal = rightCol[k];
 					}else{
@@ -173,18 +175,60 @@ int main(int argc, char **argv) {
 		}
 	}
 	// print results
-	printf("Results for Node: %d\n", ID);
-	
-	for(j = 0; j < NUM_ROWS; j++){
-		for(k = 0; k < NUM_COLUMNS; k++){
+	wait = 1;
+	if(NoProc > 1){
+		for(j=0; j<NUM_ROWS; j++){
+			if(ID == 0){
+				//print then send
+				printf("Node: %d, Row: %d - ",ID, j);
+				for(k = 0; k < NUM_COLUMNS/NoProc; k++){
+					printf("%1.2f ", grid[j][k]);
+				}
+				MPI_Send(&wait, 1, MPI_INT, ID+1, 0, MPI_COMM_WORLD);
+			}else if(ID == NoProc -1){
+				//rec then print
+				MPI_Recv(&wait, 1, MPI_INT,  ID-1, MPI_ANY_TAG, MPI_COMM_WORLD, &Status);
+				printf("Node: %d, Row: %d - ",ID, j);
+				for(k = 0; k < NUM_COLUMNS/NoProc; k++){
+					printf("%1.2f ", grid[j][k]);
+				}
+				//printf("\n");
+			}else{
+				//rec, print then send
+				MPI_Recv(&wait, 1, MPI_INT,  ID-1, MPI_ANY_TAG, MPI_COMM_WORLD, &Status);
+				printf("Node: %d, Row: %d - ",ID, j);
+				for(k = 0; k < NUM_COLUMNS/NoProc; k++){
+					printf("%1.2f ", grid[j][k]);
+				}
+				MPI_Send(&wait, 1, MPI_INT, ID+1, 0, MPI_COMM_WORLD);
+			}
+			printf("\n");
+		}
+	}else{
+	/*
+		//just print
+		for(j = 0; j < NUM_ROWS; j++){
+			for(k = 0; k < NUM_COLUMNS/NoProc; k++){
+				printf("%1.2f ", grid[j][k]);
+			}
+			printf("\n");
+		}*/
+	}
+/*	
+	printf("Node: %d, Row: %d - ",ID, j);
+	for(j=0; j < NUM_ROWS; j++){
+		for(k = 0; k < NUM_COLUMNS/NoProc){
 			printf("%1.2f ", grid[j][k]);
 		}
-		printf("\n");
 	}
-	
+*/	
 	/*## Free memory again ##*/
 	free(leftCol);
 	free(rightCol);
+	for(i = 0; i < NUM_ROWS; i++){
+		free(grid_new[i]);
+	}
+	free(grid_new);
 	for(i = 0; i < NUM_ROWS; i++){
 		free(grid[i]);
 	}

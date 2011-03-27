@@ -47,12 +47,12 @@ int main(int argc, char **argv) {
 	for(i = 0; i < NUM_TIME_STEPS; i++){
 		for(j = 0; j < NUM_COLUMNS; j++){
 			for(k = 0; k < NUM_ROWS; k++){
-					if(j == 0){
-						leftVal = -1;
-					}
-					if(j == (NUM_COLUMNS) - 1){
-						rightVal = -1;
-					}
+				if(j == 0){
+					leftVal = -1;
+				}
+				if(j == (NUM_COLUMNS) - 1){
+					rightVal = -1;
+				}
 				//all nodes have top and bottom edges
 				if(k==0){
 					topVal = -1;
@@ -105,9 +105,9 @@ int main(int argc, char **argv) {
 	// print results
 	printf("Results!\n");
 	
-	for(j = 0; j < NUM_COLUMNS; j++){
-		for(k = 0; k < NUM_ROWS; k++){
-			printf("%1.2f ", grid_new[k][j]);
+	for(j = 0; j < NUM_ROWS; j++){
+		for(k = 0; k < NUM_COLUMNS; k++){
+			printf("%1.2f ", grid_new[j][k]);
 		}
 		printf("\n");
 	}
