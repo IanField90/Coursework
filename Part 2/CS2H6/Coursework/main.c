@@ -53,6 +53,7 @@ int main(int argc, char **argv) {
 	double curVal, topVal, leftVal, rightVal, bottomVal;
 	double **grid, **grid_new;
 	double *leftCol = NULL, *rightCol = NULL;
+	double nodeLeft[NUM_ROWS], nodeRight[NUM_ROWS];
 	int wait;
 	MPI_Status Status;
 	
@@ -71,6 +72,42 @@ int main(int argc, char **argv) {
 	
 	for(i = 0; i < NUM_TIME_STEPS; i++){
 		//Share data if more than one proc
+		for(j=0; j<NUM_ROWS; j++){
+			nodeLeft[j] = grid[j][0];
+			nodeRight[j] = grid[j][(NUM_COLUMNS/NoProc) -1];
+		}
+		
+		if(NoProc > 1){
+			if(ID == 0){
+				//send right col
+				MPI_Ssend(nodeRight, 
+						  NUM_ROWS, MPI_DOUBLE, ID+1, 0, MPI_COMM_WORLD);
+				//recv right col
+				MPI_Recv(rightCol, NUM_ROWS, 
+						 MPI_DOUBLE,  ID+1, MPI_ANY_TAG, MPI_COMM_WORLD, &Status);
+			}else if(ID == NoProc-1){
+				//recv left col
+				MPI_Recv(leftCol, NUM_ROWS, 
+						 MPI_DOUBLE,  ID-1, MPI_ANY_TAG, MPI_COMM_WORLD, &Status);
+				//send left col
+				MPI_Ssend(nodeLeft, NUM_ROWS, MPI_DOUBLE, ID-1, 0, MPI_COMM_WORLD);
+			}else{
+				//recv left col
+				MPI_Recv(leftCol, NUM_ROWS, 
+						 MPI_DOUBLE,  ID-1, MPI_ANY_TAG, MPI_COMM_WORLD, &Status);
+				//send left col
+				MPI_Ssend(nodeLeft, NUM_ROWS, MPI_DOUBLE, ID-1, 0, MPI_COMM_WORLD);
+				
+				//send right col
+				MPI_Ssend(nodeRight, 
+						  NUM_ROWS, MPI_DOUBLE, ID + 1, 0, MPI_COMM_WORLD);
+				//recv right col
+				MPI_Recv(rightCol, NUM_ROWS, 
+						 MPI_DOUBLE,  ID+1, MPI_ANY_TAG, MPI_COMM_WORLD, &Status);
+			}
+		}
+		
+		/*
 		if(NoProc > 1){
 			if(ID == 0){
 				//send right col
@@ -100,7 +137,7 @@ int main(int argc, char **argv) {
 						 MPI_DOUBLE,  ID+1, MPI_ANY_TAG, MPI_COMM_WORLD, &Status);
 			}
 		}
-
+		*/
 		//Traverse across entire section's array
 		//Do calculation. j = Current column, k = Current row
 		for(j = 0; j < (NUM_COLUMNS / NoProc); j++){
