@@ -5,7 +5,7 @@
 #include <math.h>
 
 #define NUM_ROWS 30 //20000
-#define NUM_COLUMNS 29 //5000
+#define NUM_COLUMNS 30 //5000
 #define NUM_TIME_STEPS 1000
 #define TOP_TEMP 100
 #define LEFT_TEMP 100
@@ -63,16 +63,16 @@ int main(int argc, char **argv) {
 	
 	
 	int generalWidth = ceil((double)NUM_COLUMNS/(double)NoProc);
-	int remainder = NUM_COLUMNS % (int)ceil((double)NUM_COLUMNS/(double)(NoProc));
+	int remainder = NUM_COLUMNS % (int)ceil((double)NUM_COLUMNS/(double)NoProc);
 	int actualWidth;
 	if(NoProc>1){
 		if(ID == NoProc-1 && remainder > 0){
-			actualWidth = remainder; //generalWidth-remainder;//remainder+1;
+			actualWidth = remainder+1; //generalWidth - remainder; ??
 		}else{
 			actualWidth = generalWidth;
 		}
 	}else{
-		actualWidth = generalWidth;
+		actualWidth = generalWidth;//1 proc
 	}
 	
 	grid = makeBuff(actualWidth, NUM_ROWS); // Get the grid memory
@@ -83,8 +83,6 @@ int main(int argc, char **argv) {
 		printf("Memory allocation faliure! Fatal.\n");
 		return -1;
 	}
-	
-	
 	
 	for(i = 0; i < NUM_TIME_STEPS; i++){
 		//Share data if more than one proc
@@ -232,12 +230,12 @@ int main(int argc, char **argv) {
 		}
 	}else{
 		//just print
-		for(j = 0; j < NUM_ROWS; j++){
-			for(k = 0; k < NUM_COLUMNS; k++){
-		 		printf("%1.2f ", grid[j][k]);
-		 	}
-		 	printf("\n");
-		}
+		 for(j = 0; j < NUM_ROWS; j++){
+			 for(k = 0; k < NUM_COLUMNS; k++){
+				 printf("%1.2f ", grid[j][k]);
+			 }
+			 printf("\n");
+		 }
 	}
 	
 	/*## Free memory again ##*/
