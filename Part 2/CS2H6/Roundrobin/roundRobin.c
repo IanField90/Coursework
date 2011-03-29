@@ -32,18 +32,16 @@ int main(int argc, char **argv) {
 		printf("Process ID: %d. Num: %d\n", ID, Num);
 		MPI_Send(&Num, 1, MPI_INT, 1, 0, MPI_COMM_WORLD);
 		MPI_Recv(&Num, 1, MPI_INT, NoProc-1, MPI_ANY_TAG, MPI_COMM_WORLD, &Status);
-		printf("Final resutl is: %s\n", Num);
+		printf("Final result is: %d\n", Num);
 	}
-	else {
+	else{ 
 		MPI_Recv(&Num, 1, MPI_INT, ID-1, MPI_ANY_TAG, MPI_COMM_WORLD, &Status);
 		Num += ID;
 		printf("Process ID: %d. Num: %d\n", ID, Num);
-		if (ID+1 < NoProc)
+		if(ID+1 < NoProc)
 			MPI_Send(&Num, 1, MPI_INT, ID+1, 0, MPI_COMM_WORLD);
-		else {
+		else
 			MPI_Send(&Num, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
-		}
-
 	}
 
 	
