@@ -53,15 +53,27 @@ int main(int argc, char **argv) {
 	double **grid, **grid_new;
 	double *leftCol = NULL, *rightCol = NULL;
 	double nodeLeft[NUM_ROWS], nodeRight[NUM_ROWS];
-	int wait;
+	int wait, remainder = 0;
+	int bleftVal, brightVal, bbottomVal, btopVal; //used for flags
 	MPI_Status Status;
 	
 	MPI_Init(&argc,&argv);	
 	MPI_Comm_size(MPI_COMM_WORLD, &NoProc); 
 	MPI_Comm_rank(MPI_COMM_WORLD, &ID);
 	
-	grid = makeBuff(NUM_COLUMNS/NoProc, NUM_ROWS); // Get the grid memory
-	grid_new = makeBuff(NUM_COLUMNS/NoProc, NUM_ROWS); //get grid memory again
+	if(ID == NoProc -1){
+		remainder = NUM_COLUMNS % ((NUM_COLUMNS/NoProc) * (NoProc-1));
+		if(remainder != 0){
+			grid = makeBuff(remainder, NUM_ROWS);
+			grid_new = makeBuff(remainder, NUM_ROWS);
+		}else{
+			grid = makeBuff(NUM_COLUMNS/NoProc, NUM_ROWS);
+			grid_new = makeBuff(NUM_COLUMNS/NoProc, NUM_ROWS);
+		}
+	}else{
+		grid = makeBuff(NUM_COLUMNS/NoProc, NUM_ROWS); // Get the grid memory
+		grid_new = makeBuff(NUM_COLUMNS/NoProc, NUM_ROWS); //get grid memory again
+	}
 	leftCol = makeCol(); //reserve left col
 	rightCol = makeCol(); //reserve right col
 	if(grid == NULL || rightCol == NULL || leftCol == NULL || grid_new == NULL){
@@ -73,8 +85,19 @@ int main(int argc, char **argv) {
 		//Share data if more than one proc
 		for(j=0; j<NUM_ROWS; j++){
 			nodeLeft[j] = grid[j][0];
-			nodeRight[j] = grid[j][(NUM_COLUMNS/NoProc) -1];
+			if(!(ID == NoProc-1)){
+				nodeRight[j] = grid[j][(NUM_COLUMNS/NoProc) -1];
+			}else{
+				//rightmost node
+				if(remainder != 0){
+					nodeRight[j] = grid[j][remainder-1];
+				}else{
+					nodeRight[j] = grid[j][(NUM_COLUMNS/NoProc) -1];
+
+				}
+			}
 		}
+		bleftVal=0, brightVal=0, bbottomVal=0, btopVal=0;
 		
 		if(NoProc > 1){
 			if(ID == 0){
@@ -106,6 +129,7 @@ int main(int argc, char **argv) {
 			}
 		}
 		
+		
 		//Traverse across entire section's array
 		//Do calculation. j = Current column, k = Current row
 		for(j = 0; j < (NUM_COLUMNS / NoProc); j++){
@@ -114,37 +138,46 @@ int main(int argc, char **argv) {
 				//only left and right nodes have left and right edges
 				if(ID == 0){
 					if(j == 0){
-						leftVal = -1;
+						bleftVal = -1;
 					}
 				}
 				if(ID == NoProc-1){
-					if(j == (NUM_COLUMNS / NoProc) - 1){
-						rightVal = -1;
+					if(remainder !=0 && j == remainder-1){
+						break;//exit loop for right node as it would be out of bounds
+					}
+					if(remainder != 0){
+						if(j == remainder - 1){
+							brightVal = -1;
+						}
+					}else{
+						if(j == (NUM_COLUMNS / NoProc)-1){
+							brightVal = -1;
+						}
 					}
 				}
 				//all nodes have top and bottom edges
 				if(k==0){
-					topVal = -1;
+					btopVal = -1;
 				}
 				if(k == NUM_ROWS -1){
-					bottomVal = -1;
+					bbottomVal = -1;
 				}
 				/*## END edges ##*/
 				
 				//Do calculation
-				if(topVal == -1){
+				if(btopVal == -1){
 					topVal = TOP_TEMP;
 				}else{
 					topVal = grid[k-1][j];
 				}
 				
-				if(bottomVal == -1){
+				if(bbottomVal == -1){
 					bottomVal = BOTTOM_TEMP;
 				}else{
 					bottomVal = grid[k+1][j];
 				}
 				
-				if(leftVal == -1){
+				if(bleftVal == -1){
 					leftVal = LEFT_TEMP;//only on left node
 				}else{
 					//left inner
@@ -156,7 +189,7 @@ int main(int argc, char **argv) {
 					}
 				}
 				
-				if(rightVal == -1){
+				if(brightVal == -1){
 					rightVal = RIGHT_TEMP;//only on right node
 				}else{
 					//right inner
@@ -182,24 +215,6 @@ int main(int argc, char **argv) {
 	// print results
 	wait = 1;
 	if(NoProc > 1){
-		/*
-		for(j=0; j<NUM_ROWS; j++){
-			if(ID==0){
-				for(k=0; k<NUM_COLUMNS/NoProc; k++){
-					printf("%1.2f ", grid[j][k]);
-				}
-				for(i=1; i < NoProc-1; i++){
-					MPI_Ssend(&wait, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
-					MPI_Recv(&wait, 1, MPI_INT, i, MPI_ANY_TAG, MPI_COMM_WORLD, &Status);
-				}
-			}else{
-				MPI_Recv(&wait, 1, MPI_INT, 0, MPI_ANY_TAG, MPI_COMM_WORLD, &Status);
-				for(k=0; k<NUM_COLUMNS/NoProc; k++){
-					printf("%1.2f ", grid[j][k]);
-				}
-				MPI_Ssend(&wait, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
-			}
-		}*/
 		for(j=0; j<NUM_ROWS; j++){
 			if(ID == 0){
 				//print then send
@@ -208,7 +223,6 @@ int main(int argc, char **argv) {
 					printf("%1.2f ", grid[j][k]);
 				}
 				MPI_Ssend(&wait, 1, MPI_INT, ID+1, 0, MPI_COMM_WORLD);
-				MPI_Recv(&wait, 1, MPI_INT,  NoProc-1, MPI_ANY_TAG, MPI_COMM_WORLD, &Status);
 			}else if(ID == NoProc -1){
 				//rec then print
 				MPI_Recv(&wait, 1, MPI_INT,  ID-1, MPI_ANY_TAG, MPI_COMM_WORLD, &Status);
@@ -217,7 +231,6 @@ int main(int argc, char **argv) {
 					printf("%1.2f ", grid[j][k]);
 				}
 				//printf("\n");
-				MPI_Ssend(&wait, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
 			}else{
 				//rec, print then send
 				MPI_Recv(&wait, 1, MPI_INT,  ID-1, MPI_ANY_TAG, MPI_COMM_WORLD, &Status);
@@ -229,7 +242,6 @@ int main(int argc, char **argv) {
 			}
 			printf("\n");
 			fflush(stdout);
-		 
 		}
 	}else{
 		//just print
