@@ -196,49 +196,49 @@ int main(int argc, char **argv) {
 			}
 		}
 	}
-	// print results
-	wait = 1;
-	if(NoProc > 1){
-		for(j=0; j<NUM_ROWS; j++){
-			if(ID == 0){
-				//print then send
-				printf("Node: %d, Row: %d - ",ID, j);
-				for(k = 0; k < actualWidth; k++){
-					printf("%1.2f ", grid[j][k]);
-				}
-				MPI_Ssend(&wait, 1, MPI_INT, ID+1, 0, MPI_COMM_WORLD);
-				MPI_Recv(&wait, 1, MPI_INT,  NoProc-1, MPI_ANY_TAG, MPI_COMM_WORLD, &Status);
-			}else if(ID == NoProc -1){
-				//rec then print
-				MPI_Recv(&wait, 1, MPI_INT,  ID-1, MPI_ANY_TAG, MPI_COMM_WORLD, &Status);
-				printf("Node: %d, Row: %d - ",ID, j);
-				for(k = 0; k < actualWidth; k++){
-					printf("%1.2f ", grid[j][k]);
-				}
-				//printf("\n");
-				MPI_Ssend(&wait, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
-			}else{
-				//rec, print then send
-				MPI_Recv(&wait, 1, MPI_INT,  ID-1, MPI_ANY_TAG, MPI_COMM_WORLD, &Status);
-				printf("Node: %d, Row: %d - ",ID, j);
-				for(k = 0; k < actualWidth; k++){
-					printf("%1.2f ", grid[j][k]);
-				}
-				MPI_Ssend(&wait, 1, MPI_INT, ID+1, 0, MPI_COMM_WORLD);
-			}
-			printf("\n");
-			fflush(stdout);
-			
-		}
-	}else{
-		//just print
-		for(j = 0; j < NUM_ROWS; j++){
-			for(k = 0; k < NUM_COLUMNS; k++){
-		 		printf("%1.2f ", grid[j][k]);
-		 	}
-		 	printf("\n");
-		}
-	}
+//	// print results
+//	wait = 1;
+//	if(NoProc > 1){
+//		for(j=0; j<NUM_ROWS; j++){
+//			if(ID == 0){
+//				//print then send
+//				printf("Node: %d, Row: %d - ",ID, j);
+//				for(k = 0; k < actualWidth; k++){
+//					printf("%1.2f ", grid[j][k]);
+//				}
+//				MPI_Ssend(&wait, 1, MPI_INT, ID+1, 0, MPI_COMM_WORLD);
+//				MPI_Recv(&wait, 1, MPI_INT,  NoProc-1, MPI_ANY_TAG, MPI_COMM_WORLD, &Status);
+//			}else if(ID == NoProc -1){
+//				//rec then print
+//				MPI_Recv(&wait, 1, MPI_INT,  ID-1, MPI_ANY_TAG, MPI_COMM_WORLD, &Status);
+//				printf("Node: %d, Row: %d - ",ID, j);
+//				for(k = 0; k < actualWidth; k++){
+//					printf("%1.2f ", grid[j][k]);
+//				}
+//				//printf("\n");
+//				MPI_Ssend(&wait, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
+//			}else{
+//				//rec, print then send
+//				MPI_Recv(&wait, 1, MPI_INT,  ID-1, MPI_ANY_TAG, MPI_COMM_WORLD, &Status);
+//				printf("Node: %d, Row: %d - ",ID, j);
+//				for(k = 0; k < actualWidth; k++){
+//					printf("%1.2f ", grid[j][k]);
+//				}
+//				MPI_Ssend(&wait, 1, MPI_INT, ID+1, 0, MPI_COMM_WORLD);
+//			}
+//			printf("\n");
+//			fflush(stdout);
+//			
+//		}
+//	}else{
+//		//just print
+//		for(j = 0; j < NUM_ROWS; j++){
+//			for(k = 0; k < NUM_COLUMNS; k++){
+//		 		printf("%1.2f ", grid[j][k]);
+//		 	}
+//		 	printf("\n");
+//		}
+//	}
 	
 	/*## Free memory again ##*/
 	free(leftCol);
