@@ -1,9 +1,11 @@
 //  Created by Ian Field on 16/03/2011.
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
+#include <sys/types.h>
 
-#define NUM_ROWS 4 //20k
-#define NUM_COLUMNS 5 //5k
+#define NUM_ROWS 20000 //20k
+#define NUM_COLUMNS 5000 //5k
 #define NUM_TIME_STEPS 10
 #define TOP_TEMP 100
 #define LEFT_TEMP 100
@@ -16,13 +18,13 @@ double** makeBuff(int columns, int rows){
 	double** ret;
 	ret = (double**) calloc(rows, sizeof(double*));
 	if(ret == NULL){
-		printf("Row alloc fault\n");
+		return NULL;
 	}
 	else{
 		for(i = 0; i<rows; i++){
 			ret[i] = (double*) calloc(columns, sizeof(double));
 				if(ret[i] == NULL){
-					printf("Column alloc fault\n");
+					return NULL;
 				}
 			}
 		}
@@ -38,11 +40,14 @@ int main(int argc, char **argv) {
 	int divisor, i, j, k;
 	double curVal, topVal, leftVal, rightVal, bottomVal;
 	double **grid, **grid_new;
-	printf("about to allocate grid\n");
+	time_t t1, t2;
 	grid = makeBuff(NUM_COLUMNS, NUM_ROWS);
-	printf("about to allocate grid_new\n");
 	grid_new = makeBuff(NUM_COLUMNS, NUM_ROWS);
-	
+	if(grid == NULL || grid_new == NULL){
+		printf("Memory allocation failure. Fatal!\n");
+		return -1;
+	}
+	time(&t1);
 	//j column, k row
 	for(i = 0; i < NUM_TIME_STEPS; i++){
 		for(j = 0; j < NUM_COLUMNS; j++){
@@ -100,9 +105,10 @@ int main(int argc, char **argv) {
 			}
 		}
 	}
-
-	
+	time(&t2);
+	printf("Time taken: %d seconds.\n", (int)t2-t1);
 	// print results
+	/*
 	printf("Results!\n");
 	
 	for(j = 0; j < NUM_ROWS; j++){
@@ -112,6 +118,7 @@ int main(int argc, char **argv) {
 		printf("\n");
 	}
 	printf("End of Results!\n");
+	 */
 	
 	if(grid_new != NULL){
 		for(i = 0; i < NUM_ROWS; i++){
