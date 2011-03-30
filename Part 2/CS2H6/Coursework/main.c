@@ -4,8 +4,8 @@
 #include <mpi.h>
 #include <math.h>
 
-#define NUM_ROWS 30 //20000
-#define NUM_COLUMNS 29 //5000
+#define NUM_ROWS 2000 //2000
+#define NUM_COLUMNS 50000 //50000
 #define NUM_TIME_STEPS 1000
 #define TOP_TEMP 100
 #define LEFT_TEMP 100
@@ -51,7 +51,7 @@ double calcTemp(double o, double t, double l, double r, double b){
 int main(int argc, char **argv) {
 	int NoProc, ID, i, j, k, divisor;
 	double curVal, topVal, leftVal, rightVal, bottomVal;
-	double **grid, **grid_new;
+	double **grid, **grid_new, **temp;
 	double *leftCol = NULL, *rightCol = NULL;
 	double nodeLeft[NUM_ROWS], nodeRight[NUM_ROWS];
 	int wait;
@@ -190,11 +190,14 @@ int main(int argc, char **argv) {
 			}
 		}
 		// update 'grid' to have 'grid_new' value
-		for(j = 0; j < actualWidth; j++){
-			for(k = 0; k < NUM_ROWS; k++){
-				grid[k][j] = grid_new[k][j];
-			}
-		}
+//		for(j = 0; j < actualWidth; j++){
+//			for(k = 0; k < NUM_ROWS; k++){
+//				grid[k][j] = grid_new[k][j];
+//			}
+//		}
+		temp = grid; 
+		grid = grid_new; 
+		grid_new = temp;
 	}
 //	// print results
 //	wait = 1;

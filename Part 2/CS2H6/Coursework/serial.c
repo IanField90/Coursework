@@ -4,8 +4,8 @@
 #include <time.h>
 #include <sys/types.h>
 
-#define NUM_ROWS 20000 //20k
-#define NUM_COLUMNS 5000 //5k
+#define NUM_ROWS 2000 //2k
+#define NUM_COLUMNS 50000 //50k
 #define NUM_TIME_STEPS 10
 #define TOP_TEMP 100
 #define LEFT_TEMP 100
@@ -39,7 +39,7 @@ double calcTemp(double o, double t, double l, double r, double b){
 int main(int argc, char **argv) {
 	int divisor, i, j, k;
 	double curVal, topVal, leftVal, rightVal, bottomVal;
-	double **grid, **grid_new;
+	double **grid, **grid_new, **temp;
 	time_t t1, t2;
 	grid = makeBuff(NUM_COLUMNS, NUM_ROWS);
 	grid_new = makeBuff(NUM_COLUMNS, NUM_ROWS);
@@ -99,14 +99,17 @@ int main(int argc, char **argv) {
 				
 			}
 		}
-		for(j = 0; j < NUM_COLUMNS; j++){
-			for(k = 0; k < NUM_ROWS; k++){
-				grid[k][j] = grid_new[k][j];
-			}
-		}
+//		for(j = 0; j < NUM_COLUMNS; j++){
+//			for(k = 0; k < NUM_ROWS; k++){
+//				grid[k][j] = grid_new[k][j];
+//			}
+//		}
+		temp = grid; 
+		grid = grid_new; 
+		grid_new = temp;
 	}
 	time(&t2);
-	printf("Time taken: %d seconds.\n", (int)t2-t1);
+	printf("Time taken: %d seconds.\n", (int)(t2-t1));
 	// print results
 	/*
 	printf("Results!\n");
