@@ -89,8 +89,14 @@ int main(int argc, char **argv) {
 	for(i = 0; i < NUM_TIME_STEPS; i++){
 		//Share data if more than one proc
 		for(j=0; j<NUM_ROWS; j++){
-			nodeLeft[j] = grid[j][0];
-			nodeRight[j] = grid[j][actualWidth -1];
+			//flag
+			if(flag==1){
+				nodeLeft[j] = grid[j][0];
+				nodeRight[j] = grid[j][actualWidth -1];
+			}else{
+				nodeLeft[j] = grid_new[j][0];
+				nodeRight[j] = grid_new[j][actualWidth -1];
+			}
 		}
 		
 		if(NoProc > 1){
@@ -125,43 +131,32 @@ int main(int argc, char **argv) {
 		
 		//Traverse across entire section's array
 		//Do calculation. j = Current column, k = Current row
-		for(j = 0; j < actualWidth; j++){
-			for(k = 0; k < NUM_ROWS; k++){
-				/*## START edges ##*/
-				//only left and right nodes have left and right edges
-				if(ID == 0){
-					if(j == 0){
-						leftVal = -1;
-					}
-				}
-				if(ID == NoProc-1){
-					if(j == actualWidth - 1){
-						rightVal = -1;
-					}
-				}
-				//all nodes have top and bottom edges
-				if(k==0){
-					topVal = -1;
-				}
-				if(k == NUM_ROWS -1){
-					bottomVal = -1;
-				}
-				/*## END edges ##*/
-				
+		for(k = 0; k < NUM_ROWS; k++){
+			for(j = 0; j < actualWidth; j++){
 				//Do calculation
-				if(topVal == -1){
+				if(k==0){
 					topVal = TOP_TEMP;
 				}else{
-					topVal = grid[k-1][j];
+					//flag
+					if(flag==1){
+						topVal = grid[k-1][j];
+					}else{
+						topVal = grid_new[k-1][j];
+					}
 				}
 				
-				if(bottomVal == -1){
+				if(k==NUM_ROWS-1){
 					bottomVal = BOTTOM_TEMP;
 				}else{
-					bottomVal = grid[k+1][j];
+					//flag
+					if(flag==1){
+						bottomVal = grid[k+1][j];
+					}else{
+						bottomVal = grid_new[k+1][j];
+					}
 				}
 				
-				if(leftVal == -1){
+				if(j==0 && ID == 0){
 					leftVal = LEFT_TEMP;//only on left node
 				}else{
 					//left inner
@@ -169,11 +164,16 @@ int main(int argc, char **argv) {
 						//get value from leftCol
 						leftVal = leftCol[k];
 					}else{
-						leftVal = grid[k][j-1];
+						//flag
+						if(flag==1){
+							leftVal = grid[k][j-1];
+						}else{
+							leftVal = grid_new[k][j-1];
+						}
 					}
 				}
 				
-				if(rightVal == -1){
+				if(j==actualWidth-1 && ID == NoProc-1){
 					rightVal = RIGHT_TEMP;//only on right node
 				}else{
 					//right inner
@@ -181,12 +181,22 @@ int main(int argc, char **argv) {
 						//getValue from rightCol
 						rightVal = rightCol[k];
 					}else{
-						rightVal = grid[k][j+1];
+						//flag
+						if(flag==1){
+							rightVal = grid[k][j+1];
+						}else{
+							rightVal = grid_new[k][j+1];
+						}
 					}
 				}
-				
-				curVal = grid[k][j];
-				grid_new[k][j] = calcTemp(curVal, topVal, leftVal, bottomVal, rightVal);
+				//flag
+				if(flag==1){
+					curVal = grid[k][j];
+					grid_new[k][j] = curVal + topVal + leftVal + bottomVal + rightVal / 5;// calcTemp(curVal, topVal, leftVal, bottomVal, rightVal);
+				}else{
+					curVal = grid_new[k][j];
+					grid[k][j] = curVal + topVal + leftVal + bottomVal + rightVal / 5;
+				}
 			}
 		}
 		// update 'grid' to have 'grid_new' value
@@ -195,9 +205,10 @@ int main(int argc, char **argv) {
 //				grid[k][j] = grid_new[k][j];
 //			}
 //		}
-		temp = grid; 
-		grid = grid_new; 
-		grid_new = temp;
+		if (flag == 1) flag = 0; else flag = 1;
+//		temp = grid; 
+//		grid = grid_new; 
+//		grid_new = temp;
 	}
 //	// print results
 //	wait = 1;

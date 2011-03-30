@@ -3,9 +3,9 @@
 #include <stdlib.h>
 #include <time.h>
 #include <sys/types.h>
-
-#define NUM_ROWS 2000
-#define NUM_COLUMNS 50000
+//TODO invert 50000 rows, 2000 columns
+#define NUM_ROWS 2000 //2k
+#define NUM_COLUMNS 50000 //50k
 #define NUM_TIME_STEPS 10
 #define TOP_TEMP 100
 #define LEFT_TEMP 100
@@ -37,10 +37,9 @@ double calcTemp(double o, double t, double l, double r, double b){
 }
 
 int main(int argc, char **argv) {
-	int i, j, k;
+	int divisor, i, j, k;
 	double curVal, topVal, leftVal, rightVal, bottomVal;
-	double **grid, **grid_new;//, **temp;
-	int flag=1;
+	double **grid, **grid_new, **temp;
 	time_t t1, t2;
 	grid = makeBuff(NUM_COLUMNS, NUM_ROWS);
 	grid_new = makeBuff(NUM_COLUMNS, NUM_ROWS);
@@ -52,59 +51,37 @@ int main(int argc, char **argv) {
 	//j column, k row
 	//optimise K
 	for(i = 0; i < NUM_TIME_STEPS; i++){
-		for(k = 0; k < NUM_ROWS; k++){	
-			for(j = 0; j < NUM_COLUMNS; j++){			
+		for(j = 0; j < NUM_COLUMNS; j++){
+			for(k = 0; k < NUM_ROWS; k++){
 				//Do calculation
 				if(k==0){
 					topVal = TOP_TEMP;
 				}else{
-					if(flag==1){
-						topVal = grid[k-1][j];
-					}else{
-						topVal = grid_new[k-1][j];
-					}
+					topVal = grid[k-1][j];
 				}
 				
 				if(k==NUM_ROWS-1){
 					bottomVal = BOTTOM_TEMP;
 				}else{
-					if(flag==1){
-						bottomVal = grid[k+1][j];
-					}else{
-						bottomVal = grid_new[k+1][j];
-					}
+					bottomVal = grid[k+1][j];
 				}
 				
 				if(j==0){
 					leftVal = LEFT_TEMP;//only on left node
 				}else{
 					//left inner
-					if(flag==1){
-						leftVal = grid[k][j-1];
-					}else{
-						leftVal = grid_new[k][j-1];
-					}
+					leftVal = grid[k][j-1];
 				}
 				
 				
 				if(j==NUM_COLUMNS-1){
 					rightVal = RIGHT_TEMP;//only on right node
 				}else{
-					if(flag==1){
-						rightVal = grid[k][j+1];
-					}else{
-						rightVal = grid_new[k][j+1];
-					}
+					rightVal = grid[k][j+1];
 				}
 				
-				if(flag==1){
-					curVal = grid[k][j];
-					grid_new[k][j] = curVal+topVal+leftVal+bottomVal+rightVal / 5;//calcTemp(curVal, topVal, leftVal, bottomVal, rightVal);
-				}
-				else{
-					curVal = grid_new[k][j];
-					grid[k][j] = curVal+topVal+leftVal+bottomVal+rightVal / 5;//calcTemp(curVal, topVal, leftVal, bottomVal, rightVal);
-				}
+				curVal = grid[k][j];
+				grid_new[k][j] = calcTemp(curVal, topVal, leftVal, bottomVal, rightVal);
 				
 			}
 		}
@@ -113,10 +90,9 @@ int main(int argc, char **argv) {
 //				grid[k][j] = grid_new[k][j];
 //			}
 //		}
-		if (flag == 1) flag = 0; else flag = 1;
-//		temp = grid; 
-//		grid = grid_new; 
-//		grid_new = temp;
+		temp = grid; 
+		grid = grid_new; 
+		grid_new = temp;
 	}
 	time(&t2);
 	printf("Time taken: %d seconds.\n", (int)(t2-t1));
