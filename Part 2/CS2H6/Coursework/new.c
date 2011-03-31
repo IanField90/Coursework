@@ -41,13 +41,6 @@ double* makeCol(){
 	return ret;
 }
 
-//Average temp of surrounding 'atoms'
-double calcTemp(double o, double t, double l, double r, double b){
-	return (o + t + l + r + b) / 5;
-}
-
-//BUG - Every ID-1th Column is 0.00
-
 int main(int argc, char **argv) {
 	int NoProc, ID, i, j, k, divisor;
 	double curVal, topVal, leftVal, rightVal, bottomVal;
@@ -67,7 +60,7 @@ int main(int argc, char **argv) {
 	int actualWidth;
 	if(NoProc>1){
 		if(ID == NoProc-1 && remainder > 0){
-			actualWidth = remainder; //generalWidth-remainder;//remainder+1;
+			actualWidth = remainder;
 		}else{
 			actualWidth = generalWidth;
 		}
@@ -87,81 +80,76 @@ int main(int argc, char **argv) {
 	
 	
 	for(i = 0; i < NUM_TIME_STEPS; i++){
+		if(ID==0){
+			printf("Timetstep: %d\n", i);
+		}
 		//Share data if more than one proc
 		for(j=0; j<NUM_ROWS; j++){
-			nodeLeft[j] = grid[j][0];
-			nodeRight[j] = grid[j][actualWidth -1];
+			//flag
+			if(flag==1){
+				nodeLeft[j] = grid[j][0];
+				nodeRight[j] = grid[j][actualWidth -1];
+			}else{
+				nodeLeft[j] = grid_new[j][0];
+				nodeRight[j] = grid_new[j][actualWidth -1];
+			}
 		}
 		
 		if(NoProc > 1){
 			if(ID == 0){
-				//send right col
-				MPI_Ssend(nodeRight, 
-						  NUM_ROWS, MPI_DOUBLE, ID+1, 0, MPI_COMM_WORLD);
-				//recv right col
-				MPI_Recv(rightCol, NUM_ROWS, 
-						 MPI_DOUBLE,  ID+1, MPI_ANY_TAG, MPI_COMM_WORLD, &Status);
+				//send node's right col
+				MPI_Ssend(nodeRight, NUM_ROWS, MPI_DOUBLE, ID+1, 0, MPI_COMM_WORLD);
+				//recv adjacent right col
+				MPI_Recv(rightCol, NUM_ROWS, MPI_DOUBLE, ID+1, MPI_ANY_TAG, MPI_COMM_WORLD, &Status);
 			}else if(ID == NoProc-1){
-				//recv left col
-				MPI_Recv(leftCol, NUM_ROWS, 
-						 MPI_DOUBLE,  ID-1, MPI_ANY_TAG, MPI_COMM_WORLD, &Status);
-				//send left col
+				//recv node's left col
+				MPI_Recv(leftCol, NUM_ROWS, MPI_DOUBLE, ID-1, MPI_ANY_TAG, MPI_COMM_WORLD, &Status);
+				//send adjacent left col
 				MPI_Ssend(nodeLeft, NUM_ROWS, MPI_DOUBLE, ID-1, 0, MPI_COMM_WORLD);
 			}else{
-				//recv left col
-				MPI_Recv(leftCol, NUM_ROWS, 
-						 MPI_DOUBLE,  ID-1, MPI_ANY_TAG, MPI_COMM_WORLD, &Status);
-				//send left col
+				//recv adjacent left col
+				MPI_Recv(leftCol, NUM_ROWS, MPI_DOUBLE, ID-1, MPI_ANY_TAG, MPI_COMM_WORLD, &Status);
+				//send node's left col
 				MPI_Ssend(nodeLeft, NUM_ROWS, MPI_DOUBLE, ID-1, 0, MPI_COMM_WORLD);
 				
-				//send right col
-				MPI_Ssend(nodeRight, 
-						  NUM_ROWS, MPI_DOUBLE, ID + 1, 0, MPI_COMM_WORLD);
-				//recv right col
-				MPI_Recv(rightCol, NUM_ROWS, 
-						 MPI_DOUBLE,  ID+1, MPI_ANY_TAG, MPI_COMM_WORLD, &Status);
+				//send node's right col
+				MPI_Ssend(nodeRight, NUM_ROWS, MPI_DOUBLE, ID+1, 0, MPI_COMM_WORLD);
+				//recv adjacent right col
+				MPI_Recv(rightCol, NUM_ROWS, MPI_DOUBLE, ID+1, MPI_ANY_TAG, MPI_COMM_WORLD, &Status);
 			}
 		}
 		
+		if(ID==0){
+			printf("Beginning calc for timestep: %d\n", i);
+		}
 		//Traverse across entire section's array
 		//Do calculation. j = Current column, k = Current row
 		for(k = 0; k < NUM_ROWS; k++){
 			for(j = 0; j < actualWidth; j++){
-				/*## START edges ##*/
-				//only left and right nodes have left and right edges
-				if(ID == 0){
-					if(j == 0){
-						leftVal = -1;
-					}
-				}
-				if(ID == NoProc-1){
-					if(j == actualWidth - 1){
-						rightVal = -1;
-					}
-				}
-				//all nodes have top and bottom edges
-				if(k==0){
-					topVal = -1;
-				}
-				if(k == NUM_ROWS -1){
-					bottomVal = -1;
-				}
-				/*## END edges ##*/
-				
 				//Do calculation
-				if(topVal == -1){
+				if(k==0){
 					topVal = TOP_TEMP;
 				}else{
-					topVal = grid[k-1][j];
+					//flag
+					if(flag==1){
+						topVal = grid[k-1][j];
+					}else{
+						topVal = grid_new[k-1][j];
+					}
 				}
 				
-				if(bottomVal == -1){
+				if(k==NUM_ROWS-1){
 					bottomVal = BOTTOM_TEMP;
 				}else{
-					bottomVal = grid[k+1][j];
+					//flag
+					if(flag==1){
+						bottomVal = grid[k+1][j];
+					}else{
+						bottomVal = grid_new[k+1][j];
+					}
 				}
 				
-				if(leftVal == -1){
+				if(j==0 && ID == 0){
 					leftVal = LEFT_TEMP;//only on left node
 				}else{
 					//left inner
@@ -169,11 +157,16 @@ int main(int argc, char **argv) {
 						//get value from leftCol
 						leftVal = leftCol[k];
 					}else{
-						leftVal = grid[k][j-1];
+						//flag
+						if(flag==1){
+							leftVal = grid[k][j-1];
+						}else{
+							leftVal = grid_new[k][j-1];
+						}
 					}
 				}
 				
-				if(rightVal == -1){
+				if(j==actualWidth-1 && ID == NoProc-1){
 					rightVal = RIGHT_TEMP;//only on right node
 				}else{
 					//right inner
@@ -181,12 +174,22 @@ int main(int argc, char **argv) {
 						//getValue from rightCol
 						rightVal = rightCol[k];
 					}else{
-						rightVal = grid[k][j+1];
+						//flag
+						if(flag==1){
+							rightVal = grid[k][j+1];
+						}else{
+							rightVal = grid_new[k][j+1];
+						}
 					}
 				}
-				
-				curVal = grid[k][j];
-				grid_new[k][j] = calcTemp(curVal, topVal, leftVal, bottomVal, rightVal);
+				//flag
+				if(flag==1){
+					curVal = grid[k][j];
+					grid_new[k][j] = curVal + topVal + leftVal + bottomVal + rightVal / 5;
+				}else{
+					curVal = grid_new[k][j];
+					grid[k][j] = curVal + topVal + leftVal + bottomVal + rightVal / 5;
+				}
 			}
 		}
 		// update 'grid' to have 'grid_new' value
@@ -195,9 +198,13 @@ int main(int argc, char **argv) {
 //				grid[k][j] = grid_new[k][j];
 //			}
 //		}
-		temp = grid; 
-		grid = grid_new; 
-		grid_new = temp;
+		if (flag == 1) 
+			flag = 0; 
+		else 
+			flag = 1;
+//		temp = grid; 
+//		grid = grid_new; 
+//		grid_new = temp;
 	}
 //	// print results
 //	wait = 1;
