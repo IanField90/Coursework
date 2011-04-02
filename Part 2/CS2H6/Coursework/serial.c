@@ -99,11 +99,11 @@ int main(int argc, char **argv) {
 				
 				if(flag==1){
 					curVal = grid[k][j];
-					grid_new[k][j] = curVal+topVal+leftVal+bottomVal+rightVal / 5;//calcTemp(curVal, topVal, leftVal, bottomVal, rightVal);
+					grid_new[k][j] = (curVal+topVal+leftVal+bottomVal+rightVal) / 5;//calcTemp(curVal, topVal, leftVal, bottomVal, rightVal);
 				}
 				else{
 					curVal = grid_new[k][j];
-					grid[k][j] = curVal+topVal+leftVal+bottomVal+rightVal / 5;//calcTemp(curVal, topVal, leftVal, bottomVal, rightVal);
+					grid[k][j] = (curVal+topVal+leftVal+bottomVal+rightVal) / 5;//calcTemp(curVal, topVal, leftVal, bottomVal, rightVal);
 				}
 				
 			}
