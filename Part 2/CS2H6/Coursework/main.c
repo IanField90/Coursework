@@ -6,13 +6,14 @@
 
 #define NUM_ROWS 2000 //2000
 #define NUM_COLUMNS 50000 //50000
-#define NUM_TIME_STEPS 10
+#define NUM_TIME_STEPS 1000
 #define TOP_TEMP 100
 #define LEFT_TEMP 100
 #define BOTTOM_TEMP 100
 #define RIGHT_TEMP 100
 
 //2D array of reservations, calloc inits to 0
+//follows C convention of x[rows][cols]
 double** makeBuff(int columns, int rows){
 	int i;
 	double** ret;
@@ -28,6 +29,7 @@ double** makeBuff(int columns, int rows){
 			}
 		}
 	}
+	//At any stage if memory allocation fails NULL is returned
 	return ret;
 }
 
@@ -38,51 +40,53 @@ double* makeCol(){
 	if(ret == NULL){
 		return NULL;
 	}
+	//At any stage if memory allocation fails NULL is returned
 	return ret;
 }
 
 int main(int argc, char **argv) {
-	int NoProc, ID, i, j, k, divisor;
-	double curVal, topVal, leftVal, rightVal, bottomVal;
-	double **grid, **grid_new, **temp;
-	double *leftCol = NULL, *rightCol = NULL;
-	double nodeLeft[NUM_ROWS], nodeRight[NUM_ROWS];
-	int wait, flag=1;
-	MPI_Status Status;
+	int NoProc, ID, i, j, k; //counters and MPI variables
+	double curVal, topVal, leftVal, rightVal, bottomVal; //store information for calculation in timestep
+	double **grid, **grid_new; //2 grids, T-1 and T
+	double *leftCol = NULL, *rightCol = NULL;//Store adjacent columns
+	double nodeLeft[NUM_ROWS], nodeRight[NUM_ROWS];//store nodes edge columns
+	int wait, flag=1;//wait used in printing, Flag used to switch T and T-1 during each timestep
+	MPI_Status Status;//Used to store the status of send and recv
 	
-	MPI_Init(&argc,&argv);	
-	MPI_Comm_size(MPI_COMM_WORLD, &NoProc); 
-	MPI_Comm_rank(MPI_COMM_WORLD, &ID);
+	MPI_Init(&argc,&argv);//Sets the MPI cluster up
+	MPI_Comm_size(MPI_COMM_WORLD, &NoProc); //Queries how many cores are in use
+	MPI_Comm_rank(MPI_COMM_WORLD, &ID);//Queries which ID this core has.
 	
 	
-	int generalWidth = ceil((double)NUM_COLUMNS/(double)NoProc);
-	int remainder = NUM_COLUMNS % (int)ceil((double)NUM_COLUMNS/(double)(NoProc));
-	int actualWidth;
+	int generalWidth = ceil((double)NUM_COLUMNS/(double)NoProc); //Calculate the generalWidth to split by
+	int remainder = NUM_COLUMNS % (int)ceil((double)NUM_COLUMNS/(double)(NoProc));//remainder after split
+	int actualWidth;//The actual width for this core
 	if(NoProc>1){
 		if(ID == NoProc-1 && remainder > 0){
-			actualWidth = remainder;
+			actualWidth = remainder;//End core gets remainder as actualWidth
 		}else{
-			actualWidth = generalWidth;
+			actualWidth = generalWidth;//everything else gets generalWidth
 		}
 	}else{
-		actualWidth = generalWidth;
+		actualWidth = generalWidth;//1 core gets all if only 1
 	}
 	
 	grid = makeBuff(actualWidth, NUM_ROWS); // Get the grid memory
 	grid_new = makeBuff(actualWidth, NUM_ROWS); //get grid memory again
 	leftCol = makeCol(); //reserve left col
 	rightCol = makeCol(); //reserve right col
+	//Exit if memory allocation fails
 	if(grid == NULL || rightCol == NULL || leftCol == NULL || grid_new == NULL){
 		printf("Memory allocation faliure! Fatal.\n");
 		return -1;
 	}
-	
+	//Do this NUM_TIME_STEPS times
 	for(i = 0; i < NUM_TIME_STEPS; i++){
-		
+		//if not just 1 core
 		if(NoProc > 1){
 			//Share data if more than one proc
 			for(j=0; j<NUM_ROWS; j++){
-				//flag
+				//prepare data to send
 				if(flag==1){
 					nodeLeft[j] = grid[j][0];
 					nodeRight[j] = grid[j][actualWidth -1];
@@ -119,28 +123,27 @@ int main(int argc, char **argv) {
 		for(k = 0; k < NUM_ROWS; k++){
 			for(j = 0; j < actualWidth; j++){
 				//Do calculation
+				//Top row
 				if(k==0){
 					topVal = TOP_TEMP;
 				}else{
-					//flag
 					if(flag==1){
 						topVal = grid[k-1][j];
 					}else{
 						topVal = grid_new[k-1][j];
 					}
 				}
-				
+				//bottom row
 				if(k==NUM_ROWS-1){
 					bottomVal = BOTTOM_TEMP;
 				}else{
-					//flag
 					if(flag==1){
 						bottomVal = grid[k+1][j];
 					}else{
 						bottomVal = grid_new[k+1][j];
 					}
 				}
-				
+				//Only left node uses ambient temperature for left col
 				if((j==0) && (ID == 0)){
 					leftVal = LEFT_TEMP;//only on left node
 				}else{
@@ -149,7 +152,7 @@ int main(int argc, char **argv) {
 						//get value from leftCol
 						leftVal = leftCol[k];
 					}else{
-						//flag
+						//use left values within the grid
 						if(flag==1){
 							leftVal = grid[k][j-1];
 						}else{
@@ -158,6 +161,7 @@ int main(int argc, char **argv) {
 					}
 				}
 				
+				//Only right node uses ambient temperature for right col
 				if((j==actualWidth-1) && (ID == NoProc-1)){
 					rightVal = RIGHT_TEMP;//only on right node
 				}else{
@@ -166,7 +170,7 @@ int main(int argc, char **argv) {
 						//getValue from rightCol
 						rightVal = rightCol[k];
 					}else{
-						//flag
+						//use right values within grid
 						if(flag==1){
 							rightVal = grid[k][j+1];
 						}else{
@@ -174,7 +178,8 @@ int main(int argc, char **argv) {
 						}
 					}
 				}
-				//flag
+				
+				//Inline calculations faster than function call
 				if(flag==1){
 					curVal = grid[k][j];
 					grid_new[k][j] = (curVal + topVal + leftVal + bottomVal + rightVal) / 5;
@@ -184,19 +189,22 @@ int main(int argc, char **argv) {
 				}
 			}
 		}
-		// update 'grid' to have 'grid_new' value
+		// update 'grid' to have 'grid_new' value V.Slow (100million assignments)
 //		for(j = 0; j < actualWidth; j++){
 //			for(k = 0; k < NUM_ROWS; k++){
 //				grid[k][j] = grid_new[k][j];
 //			}
 //		}
+		//pointer Swapping. Still not optimum but only 3 assignments vs 100million.
+//		temp = grid; 
+//		grid = grid_new; 
+//		grid_new = temp;
+		
+		//Flag is most efficient version of dealing with T-1 becoming T
 		if (flag == 1) 
 			flag = 0; 
 		else 
 			flag = 1;
-//		temp = grid; 
-//		grid = grid_new; 
-//		grid_new = temp;
 	}
 //	// print results
 //	wait = 1;
@@ -245,6 +253,7 @@ int main(int argc, char **argv) {
 	/*## Free memory again ##*/
 	free(leftCol);
 	free(rightCol);
+	//Each row must be freed first
 	for(i = 0; i < NUM_ROWS; i++){
 		free(grid_new[i]);
 	}
@@ -253,5 +262,5 @@ int main(int argc, char **argv) {
 		free(grid[i]);
 	}
 	free(grid);
-	MPI_Finalize();
+	MPI_Finalize();//Allow MPI Runner to know the status of the exit
 }
