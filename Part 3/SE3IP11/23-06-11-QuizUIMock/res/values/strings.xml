@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Should a problem occur that you are unfamiliar with. Which of the following should you do?</string>
+    <string name="difficulty">Difficulty rating</string>
+    <string name="progress">Quiz Progress</string>
+    <string name="app_name">WAGGGS Quiz Question Mock</string>
+</resources>
