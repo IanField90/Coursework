@@ -5,18 +5,17 @@ import org.jcsp.lang.ChannelInputInt;
 
 public class Departs implements CSProcess{
 	private ChannelInputInt depart;
+	private int value;
+
 	public Departs(ChannelInputInt in){
 		depart = in;
 	}
-	int value;
 	
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		while(true){
-			value = depart.read();
-			System.out.println("Spaces left "+ value);
-		}
+		value = depart.read();
+		System.out.println("Spaces left " + value);
 	}
 
 }
