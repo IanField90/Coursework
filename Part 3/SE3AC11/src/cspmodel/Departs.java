@@ -1,21 +1,24 @@
 package cspmodel;
 
 import org.jcsp.lang.CSProcess;
-import org.jcsp.lang.ChannelInputInt;
+import org.jcsp.lang.One2OneChannelInt;
 
 public class Departs implements CSProcess{
-	private ChannelInputInt depart;
+	private One2OneChannelInt depart;
 	private int value;
 
-	public Departs(ChannelInputInt in){
+	public Departs(One2OneChannelInt in){
 		depart = in;
 	}
-	
+
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
-		value = depart.read();
-		System.out.println("Spaces left " + value);
+		while(true){
+			if(depart.in().pending()){
+				value = depart.in().read();
+				System.out.println("Spaces left " + value);
+			}
+		}
 	}
 
 }

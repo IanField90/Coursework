@@ -1,21 +1,21 @@
 package cspmodel;
 
 import org.jcsp.lang.CSProcess;
-import org.jcsp.lang.ChannelOutputInt;
+import org.jcsp.lang.One2OneChannelInt;
 
 public class Arrives implements CSProcess{
-//	private One2OneChannelInt arrive;
-	private ChannelOutputInt arrive;
-	
-	public Arrives(ChannelOutputInt out){
+	private One2OneChannelInt arrive;
+	private int car;
+	public Arrives(One2OneChannelInt out){
 		arrive = out;
+		car = 0;
 	}
-	int value;
-	
+
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
-		System.out.println("Arrive");
-		arrive.write(new Integer(1));
+		while(true){
+			System.out.println("Car #" + ++car + " arrives");
+			arrive.out().write(car);
+		}
 	}
 }
