@@ -1,6 +1,7 @@
 package cspmodel;
 
 import org.jcsp.lang.CSProcess;
+import org.jcsp.lang.CSTimer;
 import org.jcsp.lang.One2OneChannelInt;
 
 public class Control implements CSProcess{
@@ -17,7 +18,7 @@ public class Control implements CSProcess{
 	}
 
 	public void run() {
-
+		final CSTimer tim = new CSTimer();
 		while(true){
 			if(arrive.in().pending()){
 				int car = arrive.in().read();
@@ -27,12 +28,13 @@ public class Control implements CSProcess{
 					System.out.println("Car #" + car +" in");
 				}
 			}
-
+			
 			if(spaces < MAX_SPACES){
 				//care leaves, more space
 				spaces++;
 				depart.out().write(spaces);
 			}
+			tim.sleep(50);
 		}
 
 	}

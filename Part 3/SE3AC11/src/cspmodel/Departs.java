@@ -1,6 +1,7 @@
 package cspmodel;
 
 import org.jcsp.lang.CSProcess;
+import org.jcsp.lang.CSTimer;
 import org.jcsp.lang.One2OneChannelInt;
 
 public class Departs implements CSProcess{
@@ -14,10 +15,12 @@ public class Departs implements CSProcess{
 	@Override
 	public void run() {
 		while(true){
+			final CSTimer tim = new CSTimer();
 			if(depart.in().pending()){
 				value = depart.in().read();
 				System.out.println("Spaces left " + value);
 			}
+			tim.sleep(50);
 		}
 	}
 
