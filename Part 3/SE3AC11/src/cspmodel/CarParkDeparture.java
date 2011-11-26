@@ -4,11 +4,11 @@ import org.jcsp.lang.CSProcess;
 import org.jcsp.lang.CSTimer;
 import org.jcsp.lang.One2OneChannelInt;
 
-public class Departs implements CSProcess{
+public class CarParkDeparture implements CSProcess{
 	private One2OneChannelInt depart;
 	private int value;
 
-	public Departs(One2OneChannelInt in){
+	public CarParkDeparture(One2OneChannelInt in){
 		depart = in;
 	}
 

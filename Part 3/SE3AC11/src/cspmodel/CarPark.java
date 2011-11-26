@@ -5,19 +5,31 @@ import org.jcsp.lang.Channel;
 import org.jcsp.lang.One2OneChannelInt;
 import org.jcsp.lang.Parallel;
 
-public class CarPark {
+public class CarPark implements CSProcess{
 
-	public static void main(String args[]){
-
+//	public static void main(String args[]){
+//
+//		One2OneChannelInt arrive = Channel.one2oneInt(); 
+//		One2OneChannelInt depart = Channel.one2oneInt();
+//
+//		Parallel carpark =  new Parallel(new CSProcess[] {
+//				new Arrives(arrive),
+//				new Control(arrive, depart),
+//				new Departs(depart)
+//		});	
+//		carpark.run();
+//
+//	}
+	
+	public void run(){
 		One2OneChannelInt arrive = Channel.one2oneInt(); 
 		One2OneChannelInt depart = Channel.one2oneInt();
 
 		Parallel carpark =  new Parallel(new CSProcess[] {
-				new Arrives(arrive),
-				new Control(arrive, depart),
-				new Departs(depart)
+				new CarParkArrival(arrive),
+				new CarParkControl(arrive, depart),
+				new CarParkDeparture(depart)
 		});	
 		carpark.run();
-
 	}
 }
