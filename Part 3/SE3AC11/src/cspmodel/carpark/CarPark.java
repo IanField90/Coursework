@@ -1,4 +1,4 @@
-package cspmodel;
+package cspmodel.carpark;
 
 import org.jcsp.lang.CSProcess;
 import org.jcsp.lang.Channel;
@@ -13,12 +13,11 @@ public class CarPark implements CSProcess{
 //		One2OneChannelInt depart = Channel.one2oneInt();
 //
 //		Parallel carpark =  new Parallel(new CSProcess[] {
-//				new Arrives(arrive),
-//				new Control(arrive, depart),
-//				new Departs(depart)
+//				new CarParkArrival(arrive),
+//				new CarParkControl(arrive, depart),
+//				new CarParkDeparture(depart)
 //		});	
 //		carpark.run();
-//
 //	}
 	
 	public void run(){
@@ -26,9 +25,9 @@ public class CarPark implements CSProcess{
 		One2OneChannelInt depart = Channel.one2oneInt();
 
 		Parallel carpark =  new Parallel(new CSProcess[] {
-				new CarParkArrival(arrive),
-				new CarParkControl(arrive, depart),
-				new CarParkDeparture(depart)
+				new Arrive(arrive),
+				new Control(arrive, depart),
+				new Depart(depart)
 		});	
 		carpark.run();
 	}

@@ -1,4 +1,4 @@
-package cspmodel;
+package cspmodel.booking;
 
 import org.jcsp.lang.CSProcess;
 

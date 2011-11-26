@@ -1,13 +1,13 @@
-package cspmodel;
+package cspmodel.carpark;
 
 import org.jcsp.lang.CSProcess;
 import org.jcsp.lang.CSTimer;
 import org.jcsp.lang.One2OneChannelInt;
 
-public class CarParkArrival implements CSProcess{
+public class Arrive implements CSProcess{
 	private One2OneChannelInt arrive;
 	private int car;
-	public CarParkArrival(One2OneChannelInt out){
+	public Arrive(One2OneChannelInt out){
 		arrive = out;
 		car = 0;
 	}
