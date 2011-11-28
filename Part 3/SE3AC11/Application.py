@@ -1,8 +1,11 @@
 import sys
-
 from pycsp import *
+from carpark import carpark
+from eticket import eticket
+from booking import booking
 
-import carpark
 Parallel(
-	carpark.run()
+	carpark.run(),
+	booking.run(),
+	eticket.run()
 )
