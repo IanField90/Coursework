@@ -1,11 +1,11 @@
 package csp.carpark;
 
 import org.jcsp.lang.CSProcess;
-import org.jcsp.lang.One2OneChannelInt;
+import org.jcsp.lang.One2OneChannel;
 
 public class Depart implements CSProcess {
 
-	public Depart(One2OneChannelInt chan_depart) {
+	public Depart(One2OneChannel depart) {
 		// TODO Auto-generated constructor stub
 	}
 	
