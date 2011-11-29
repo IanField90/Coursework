@@ -30,7 +30,9 @@ public class Departure implements CSProcess {
 				departure.write(1);
 				
 				int spaces = depart_response.read();
-				System.out.println("Departure. Spaces left: " + spaces);
+				if(spaces != -1){
+					System.out.println("Departure. Spaces left: " + spaces);
+				}
 			}
 		}
 		

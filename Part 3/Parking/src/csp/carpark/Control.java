@@ -29,6 +29,7 @@ public class Control implements CSProcess{
 		
 		while(true){
 			switch(alt.priSelect()){
+//			switch(alt.fairSelect()){
 			case 1:
 				//arrive
 				if(spaces > 0){
@@ -45,6 +46,10 @@ public class Control implements CSProcess{
 					depart.read();
 					spaces++;
 					depart_out.write(spaces);
+				}
+				else{
+					depart.read();
+					depart_out.write(-1);
 				}
 				break;
 			}

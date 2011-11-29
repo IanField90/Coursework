@@ -1,13 +1,9 @@
 package csp.carpark;
 
-import org.jcsp.lang.Alternative;
 import org.jcsp.lang.AltingChannelInput;
 import org.jcsp.lang.AltingChannelInputInt;
 import org.jcsp.lang.CSProcess;
-import org.jcsp.lang.CSTimer;
 import org.jcsp.lang.ChannelOutputInt;
-import org.jcsp.lang.Guard;
-import org.jcsp.lang.One2OneChannelInt;
 
 public class Arrival implements CSProcess {
 	private AltingChannelInput arrival_event;
@@ -25,9 +21,8 @@ public class Arrival implements CSProcess {
 	}
 
 	public void run(){	
-		CSTimer tim = new CSTimer();
-		final Guard[] altChans = {};
-		final Alternative alt = new Alternative(altChans);
+//		final Guard[] altChans = {};
+//		final Alternative alt = new Alternative(altChans);
 		while(true){
 
 			//If arrival event is triggered
