@@ -7,6 +7,7 @@ import javax.swing.JTextField;
 import org.jcsp.lang.CSProcess;
 import org.jcsp.lang.Channel;
 import org.jcsp.lang.One2OneChannel;
+import org.jcsp.lang.One2OneChannelInt;
 import org.jcsp.lang.Parallel;
 
 public class Carpark implements CSProcess {
@@ -16,12 +17,14 @@ public class Carpark implements CSProcess {
 	private JFrame frame = new JFrame("Car Park");
 	
 	public Carpark(One2OneChannel chan_ticket){		
-		One2OneChannel arrive = Channel.one2one();
-		One2OneChannel depart = Channel.one2one();
+		One2OneChannelInt arrive_notify = Channel.one2oneInt();
+		One2OneChannelInt arrive_response = Channel.one2oneInt();
+		One2OneChannelInt depart_notify = Channel.one2oneInt();
+		One2OneChannelInt depart_response = Channel.one2oneInt();
 		
-		this.arrival = new Arrival(arrive, 1);
-		this.depart = new Depart(depart);
-		this.control = new Control(arrive, depart);
+		this.arrival = new Arrival(arrive_notify, arrive_response);
+		this.depart = new Depart(depart_notify, depart_response);
+		this.control = new Control(arrive_notify, arrive_response, depart_notify, depart_response);
 	}
 	
 	public void run(){
@@ -48,6 +51,20 @@ public class Carpark implements CSProcess {
 			frame.setVisible(true);
 		}
 		
+	}
+	
+	public static void main (String argv[]){
+		One2OneChannelInt arrive_notify = Channel.one2oneInt();
+		One2OneChannelInt arrive_response = Channel.one2oneInt();
+		One2OneChannelInt depart_notify = Channel.one2oneInt();
+		One2OneChannelInt depart_response = Channel.one2oneInt();
+
+		Parallel carpark = new Parallel(new CSProcess[]{
+				new Arrival(arrive_notify, arrive_response),
+				new Depart(depart_notify, depart_response),
+				new Control(arrive_notify, arrive_response, depart_notify, depart_response)
+		});
+		carpark.run();
 	}
 
 }

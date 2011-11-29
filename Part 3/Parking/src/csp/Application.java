@@ -41,7 +41,7 @@ public class Application extends JPanel implements ActionListener{
 			carpark,
 			eticket
 		});
-		//application.run();
+		application.run();
 
 		final Application app = new Application();
 		javax.swing.SwingUtilities.invokeLater(new Runnable(){
