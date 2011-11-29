@@ -1,53 +1,53 @@
 package csp.carpark;
 
+import org.jcsp.lang.Alternative;
+import org.jcsp.lang.AltingChannelInputInt;
 import org.jcsp.lang.CSProcess;
-import org.jcsp.lang.One2OneChannelInt;
+import org.jcsp.lang.ChannelOutputInt;
+import org.jcsp.lang.Guard;
 
 public class Control implements CSProcess{
-	private One2OneChannelInt arrive_notify, arrive_response, depart_notify, depart_response;
-	private final int MAX_SPACES = 50;
-	private int spaces = 50;
-
-	public Control(One2OneChannelInt arrive_notify, One2OneChannelInt arrive_response, 
-			One2OneChannelInt depart_notify, One2OneChannelInt depart_response) {
-		this.arrive_notify = arrive_notify;
-		this.arrive_response = arrive_response;
-		this.depart_notify = depart_notify;
-		this.depart_response = depart_response;
+	private AltingChannelInputInt arrive;
+	private AltingChannelInputInt depart;
+	private ChannelOutputInt arrive_out;
+	private ChannelOutputInt depart_out;
+	private final int MAX_SPACES = 10;
+	private int spaces = 10;
+	
+	//Set up control for 2 way communications with Arrive and Depart.
+	public Control(AltingChannelInputInt arrive, AltingChannelInputInt depart,
+			ChannelOutputInt arrive_out, ChannelOutputInt depart_out){
+		this.arrive = arrive;
+		this.depart = depart;
+		this.arrive_out = arrive_out;
+		this.depart_out = depart_out;
 	}
-
+	
 	public void run(){
+		final Guard[] altChannels = {depart, arrive};
+		final Alternative alt = new Alternative(altChannels);
+		
 		while(true){
-			
-			//TODO prioritise depart over arrive but alternate guards
-			
-			arrive_notify.in().read();
-			if(spaces > 0){
-				spaces--;
-				arrive_response.out().write(spaces);
+			switch(alt.priSelect()){
+			case 1:
+				//arrive
+				if(spaces > 0){
+					//there is space so accept arrival
+					arrive.read();
+					spaces--;
+					arrive_out.write(spaces);
+				}
+				break;
+			case 0:
+				//depart
+				if(spaces < MAX_SPACES){
+					//there is a car inside, so allow departure
+					depart.read();
+					spaces++;
+					depart_out.write(spaces);
+				}
+				break;
 			}
-			
-			depart_notify.in().read();
-			if(spaces < MAX_SPACES){
-				spaces++;
-				depart_response.out().write(spaces);
-			}
-			
-//			if(arrive_notify.in().pending()){
-//				int car = arrive_notify.in().read();
-//				if(spaces > 0){
-//					spaces--;
-//					arrive_response.out().write(spaces);
-//					//					System.out.println("Car #" + car + " Arrives. Spaces left: " + spaces);
-//				}
-//			}
-//
-//			if(depart_notify.in().pending()){
-//				if(spaces < MAX_SPACES){
-//					spaces++;
-//					depart_response.out().write(spaces);
-//				}
-//			}
 		}
 	}
 

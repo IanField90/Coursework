@@ -1,70 +1,74 @@
 package csp.carpark;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import java.awt.Frame;
+import java.awt.GridLayout;
 
+import org.jcsp.awt.ActiveButton;
+import org.jcsp.awt.ActiveClosingFrame;
 import org.jcsp.lang.CSProcess;
 import org.jcsp.lang.Channel;
 import org.jcsp.lang.One2OneChannel;
 import org.jcsp.lang.One2OneChannelInt;
 import org.jcsp.lang.Parallel;
+import org.jcsp.util.OverWriteOldestBuffer;
 
+/**
+ * 
+ * @author ianfield
+ * This class acts as a GUI and interface to the carpark overall.
+ * Arrive and Depart events are triggered through this.
+ */
 public class Carpark implements CSProcess {
-	private Arrival arrival;
-	private Depart depart;
-	private Control control;
-	private JFrame frame = new JFrame("Car Park");
-	
-	public Carpark(One2OneChannel chan_ticket){		
-		One2OneChannelInt arrive_notify = Channel.one2oneInt();
-		One2OneChannelInt arrive_response = Channel.one2oneInt();
-		One2OneChannelInt depart_notify = Channel.one2oneInt();
-		One2OneChannelInt depart_response = Channel.one2oneInt();
-		
-		this.arrival = new Arrival(arrive_notify, arrive_response);
-		this.depart = new Depart(depart_notify, depart_response);
-		this.control = new Control(arrive_notify, arrive_response, depart_notify, depart_response);
-	}
-	
-	public void run(){
-		
-		Parallel carpark = new Parallel(new CSProcess[]{
-				arrival,
-				control,
-				depart
-		});
-		
-		carpark.run();
-	}
-	
-	public void createAndShowGUI(){
-		if(!frame.isVisible()){
-			JPanel carpark = new JPanel();
-			carpark.add(new JTextField("Hello"));
-			frame.add(carpark);
-			frame.pack();
-			frame.setVisible(true);
-			frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		}
-		else{
-			frame.setVisible(true);
-		}
-		
-	}
-	
-	public static void main (String argv[]){
-		One2OneChannelInt arrive_notify = Channel.one2oneInt();
-		One2OneChannelInt arrive_response = Channel.one2oneInt();
-		One2OneChannelInt depart_notify = Channel.one2oneInt();
-		One2OneChannelInt depart_response = Channel.one2oneInt();
 
-		Parallel carpark = new Parallel(new CSProcess[]{
-				new Arrival(arrive_notify, arrive_response),
-				new Depart(depart_notify, depart_response),
-				new Control(arrive_notify, arrive_response, depart_notify, depart_response)
-		});
-		carpark.run();
+	public Carpark(){
+
+	}
+
+	public void run(){
+//
+//		Parallel carpark = new Parallel(new CSProcess[]{
+//				arrival,
+//				control,
+//				depart
+//		});
+//
+//		carpark.run();
+	}
+
+	public static void main (String argv[]){
+		ActiveClosingFrame activeClosingFrame = new ActiveClosingFrame("Carpark");
+		final Frame frame = activeClosingFrame.getActiveFrame();
+		int n = 10;// Buffer size
+
+		final One2OneChannel arrive_event = Channel.one2one(new OverWriteOldestBuffer(n));
+		final One2OneChannel depart_event = Channel.one2one(new OverWriteOldestBuffer(n));
+		final One2OneChannelInt arrive = Channel.one2oneInt();
+		final One2OneChannelInt depart = Channel.one2oneInt();
+		final One2OneChannelInt arrive_response = Channel.one2oneInt();
+		final One2OneChannelInt depart_response = Channel.one2oneInt();
+
+		final ActiveButton btn_arrive = new ActiveButton(null, arrive_event.out(), "Arrive");
+		final ActiveButton btn_depart = new ActiveButton(null, depart_event.out(), "Depart");
+
+		Control control = new Control(arrive.in(), depart.in(), arrive_response.out(), depart_response.out());
+		Arrival arrival = new Arrival(arrive_event.in(), arrive.out(), arrive_response.in());
+		Departure departure = new Departure(depart_event.in(), depart.out(), depart_response.in());
+		
+		frame.setLayout(new GridLayout(1, 2));
+		frame.add(btn_arrive);
+		frame.add(btn_depart);
+		frame.pack();
+		frame.setVisible(true);
+		
+		new Parallel(new CSProcess[]{
+				activeClosingFrame,
+				btn_arrive,
+				btn_depart,
+				arrival,
+				departure,
+				control
+		}).run();
+
 	}
 
 }

@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import org.jcsp.lang.CSProcess;
 import org.jcsp.lang.Channel;
@@ -33,7 +34,8 @@ public class Application extends JPanel implements ActionListener{
 		chan_ticket = Channel.one2one();
 		
 		booking = new Booking(chan_mail, chan_ticket); // booking on the day for X days
-		carpark = new Carpark(chan_ticket);
+//		carpark = new Carpark(chan_ticket);
+		carpark = new Carpark();
 		eticket = new ETicket(chan_mail);
 				
 		final Parallel application = new Parallel(new CSProcess[]{
@@ -41,14 +43,17 @@ public class Application extends JPanel implements ActionListener{
 			carpark,
 			eticket
 		});
-		application.run();
 
 		final Application app = new Application();
-		javax.swing.SwingUtilities.invokeLater(new Runnable(){
+		SwingUtilities.invokeLater(new Runnable(){
 			public void run(){
 				app.createAndShowGUI();
+//				application.run();
+
 			}
+
 		});
+
 	}
 	
 	public void createAndShowGUI(){
@@ -75,7 +80,8 @@ public class Application extends JPanel implements ActionListener{
 		}
 		
 		if(e.getSource() == btn_carpark){
-			carpark.createAndShowGUI();
+//			carpark.createAndShowGUI();
+			Carpark.main(null);
 		}
 		
 		if(e.getSource() == btn_eticket){
