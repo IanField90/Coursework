@@ -81,11 +81,16 @@ public class Application extends JPanel implements ActionListener{
 		
 		if(e.getSource() == btn_carpark){
 //			carpark.createAndShowGUI();
-			Carpark.main(null);
+			SwingUtilities.invokeLater(new Runnable(){
+				public void run(){
+					Carpark.main(null);
+				}
+			});
+//			Carpark.main(null);
 		}
 		
 		if(e.getSource() == btn_eticket){
-			eticket.createAndShowGUI();
+			eticket.main(null);
 		}
 		
 	}

@@ -30,23 +30,13 @@ public class Departure implements CSProcess {
 				departure.write(1);
 				
 				int spaces = depart_response.read();
+				// -1 passed to stop busy waiting if no cars in car park
 				if(spaces != -1){
 					System.out.println("Departure. Spaces left: " + spaces);
 				}
 			}
 		}
 		
-//		while(true){
-//			depart_notify.out().write(1);
-//			
-//			int spaces = depart_response.in().read();
-//			System.out.println("Spaces left: " + spaces);
-
-//			if(depart_response.in().pending()){
-//				int spaces = depart_response.in().read();
-//				System.out.println("Spaces left: " + spaces);
-//			}
-//		}
 	}
 
 }

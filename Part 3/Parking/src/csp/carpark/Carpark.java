@@ -25,14 +25,7 @@ public class Carpark implements CSProcess {
 	}
 
 	public void run(){
-//
-//		Parallel carpark = new Parallel(new CSProcess[]{
-//				arrival,
-//				control,
-//				depart
-//		});
-//
-//		carpark.run();
+		//TODO Auto-generated method stub
 	}
 
 	public static void main (String argv[]){
