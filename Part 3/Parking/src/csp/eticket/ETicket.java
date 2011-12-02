@@ -8,6 +8,7 @@ import org.jcsp.awt.ActiveClosingFrame;
 import org.jcsp.lang.CSProcess;
 import org.jcsp.lang.Channel;
 import org.jcsp.lang.One2OneChannel;
+import org.jcsp.lang.Parallel;
 import org.jcsp.util.OverWriteOldestBuffer;
 
 public class ETicket implements CSProcess{
@@ -30,8 +31,8 @@ public class ETicket implements CSProcess{
 		int n = 10; //Buffer size
 		
 		final One2OneChannel arrive_event = Channel.one2one(new OverWriteOldestBuffer(n));
-		final One2OneChannel icon_event = Channel.one2one();
-		final One2OneChannel icon_start = Channel.one2one();
+		final One2OneChannel icon_event = Channel.one2one();// UInt display
+		final One2OneChannel icon_start = Channel.one2one(); //Send to mailbag from icon to enable next, prev etc operations
 		
 		final One2OneChannel next_event = Channel.one2one();
 		final One2OneChannel previous_event = Channel.one2one();
@@ -48,7 +49,8 @@ public class ETicket implements CSProcess{
 		
 		
 		Icon icon = new Icon(icon_event.in(), icon_start.out());
-		Mailbag mailbag = new Mailbag(arrive_event.in(), next_event.in(), previous_event.in(), delete_event.in(), send_event.in());
+		Mailbag mailbag = new Mailbag(arrive_event.in(), next_event.in(), previous_event.in(), delete_event.in(),
+				send_event.in(), icon_start.in());
 		
 		
 		frame.setLayout(new GridLayout(2, 3));
@@ -61,6 +63,12 @@ public class ETicket implements CSProcess{
 		frame.add(btn_delete_event);
 		frame.pack();
 		frame.setVisible(true);
+		
+		Parallel eticket = new Parallel(new CSProcess[]{
+				btn_arrive_event, btn_icon_event, btn_next_event, btn_previous_event, btn_delete_event, btn_send_event,
+				icon,
+				mailbag
+		});
 		
 	}
 
