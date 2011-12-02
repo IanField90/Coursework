@@ -50,13 +50,13 @@ public class ETicket implements CSProcess{
 		
 		Icon icon = new Icon(icon_event.in(), icon_start.out());
 		Mailbag mailbag = new Mailbag(arrive_event.in(), next_event.in(), previous_event.in(), delete_event.in(),
-				send_event.in(), icon_start.in());
+				send_event.in(), icon_event.in(), send.out(), icon_start.in());
 		
+		Dispatch dispatch = new Dispatch(send.in());
 		
 		frame.setLayout(new GridLayout(2, 3));
 		frame.add(btn_arrive_event);
 		frame.add(btn_icon_event);
-
 		frame.add(btn_send_event);
 		frame.add(btn_next_event);
 		frame.add(btn_previous_event);
@@ -64,11 +64,13 @@ public class ETicket implements CSProcess{
 		frame.pack();
 		frame.setVisible(true);
 		
-		Parallel eticket = new Parallel(new CSProcess[]{
+		new Parallel(new CSProcess[]{
+				activeClosingFrame,
 				btn_arrive_event, btn_icon_event, btn_next_event, btn_previous_event, btn_delete_event, btn_send_event,
 				icon,
-				mailbag
-		});
+				mailbag,
+				dispatch
+		}).run();
 		
 	}
 
