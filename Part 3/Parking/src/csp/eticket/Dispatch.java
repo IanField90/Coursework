@@ -15,7 +15,7 @@ public class Dispatch implements CSProcess {
 		while (true){
 			
 				send.read();
-				System.out.println("SEND");
+				System.out.println("SEND Dispatch");
 			
 		}
 		

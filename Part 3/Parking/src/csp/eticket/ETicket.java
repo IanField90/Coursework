@@ -48,9 +48,9 @@ public class ETicket implements CSProcess{
 		final ActiveButton btn_send_event = new ActiveButton(null, send_event.out(), "Send");
 		
 		
-		Icon icon = new Icon(icon_event.in(), icon_start.out());
+		Icon icon = new Icon(icon_start.in());
 		Mailbag mailbag = new Mailbag(arrive_event.in(), next_event.in(), previous_event.in(), delete_event.in(),
-				send_event.in(), icon_event.in(), send.out(), icon_start.in());
+				send_event.in(), icon_event.in(), send.out(), icon_start.out());
 		
 		Dispatch dispatch = new Dispatch(send.in());
 		

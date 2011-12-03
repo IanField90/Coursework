@@ -10,12 +10,12 @@ import org.jcsp.lang.Guard;
 public class Mailbag implements CSProcess {
 	private AltingChannelInput arrive_event, next_event, previous_event, delete_event, send_event, icon_event;
 	private ChannelOutput send;
-	private ChannelInput icon_start;
+	private ChannelOutput icon_start;
 	private int num_messages;
 	
 	public Mailbag(AltingChannelInput arrive_event, AltingChannelInput next_event,
 			AltingChannelInput previous_event, AltingChannelInput delete_event,
-			AltingChannelInput send_event, AltingChannelInput icon_event, ChannelOutput send, ChannelInput icon_start) {
+			AltingChannelInput send_event, AltingChannelInput icon_event, ChannelOutput send, ChannelOutput icon_start) {
 		this.arrive_event = arrive_event;
 		this.next_event = next_event;
 		this.previous_event = previous_event;
@@ -38,6 +38,7 @@ public class Mailbag implements CSProcess {
 		final int SEND = 4;
 		final int ICON = 5;
 		
+		//TODO Bug for any press before ICON (other than arrive as it is buffered)
 		icon_event.read();
 		System.out.println("ICON");
 		
@@ -73,8 +74,7 @@ public class Mailbag implements CSProcess {
 				break;
 			case ICON:
 				icon_event.read();
-				System.out.println("ICON");
-				//TODO enable icon
+				icon_start.write(1);
 				break;
 			}
 		}

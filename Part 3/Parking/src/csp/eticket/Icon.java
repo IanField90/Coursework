@@ -1,17 +1,20 @@
 package csp.eticket;
 
-import org.jcsp.lang.AltingChannelInput;
 import org.jcsp.lang.CSProcess;
-import org.jcsp.lang.ChannelOutput;
+import org.jcsp.lang.ChannelInput;
 
 public class Icon implements CSProcess {
 
-	public Icon(AltingChannelInput icon_event, ChannelOutput icon_start) {
-		// TODO Auto-generated constructor stub
+	private ChannelInput icon_start;
+	public Icon(ChannelInput icon_start) {
+		this.icon_start = icon_start;
 	}
 	
 	public void run(){
-		
+		while(true){
+			icon_start.read();
+			System.out.println("ICON");
+		}
 	}
 
 }
