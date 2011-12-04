@@ -41,7 +41,7 @@ public class ETicket implements CSProcess{
 		final One2OneChannel send = Channel.one2one();// send -> DISPATCH
 		
 		final ActiveButton btn_arrive_event = new ActiveButton(null, arrive_event.out(), "Arrive");
-		final ActiveButton btn_icon_event = new ActiveButton(null, icon_event.out(), "ICON");
+		final ActiveButton btn_icon_event = new ActiveButton(null, icon_event.out(), "Icon");
 		final ActiveButton btn_next_event = new ActiveButton(null, next_event.out(), "Next");
 		final ActiveButton btn_previous_event = new ActiveButton(null, previous_event.out(), "Previous");
 		final ActiveButton btn_delete_event = new ActiveButton(null, delete_event.out(), "Delete");

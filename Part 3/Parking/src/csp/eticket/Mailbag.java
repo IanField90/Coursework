@@ -3,7 +3,6 @@ package csp.eticket;
 import org.jcsp.lang.Alternative;
 import org.jcsp.lang.AltingChannelInput;
 import org.jcsp.lang.CSProcess;
-import org.jcsp.lang.ChannelInput;
 import org.jcsp.lang.ChannelOutput;
 import org.jcsp.lang.Guard;
 
@@ -12,7 +11,7 @@ public class Mailbag implements CSProcess {
 	private ChannelOutput send;
 	private ChannelOutput icon_start;
 	private int num_messages;
-	
+
 	public Mailbag(AltingChannelInput arrive_event, AltingChannelInput next_event,
 			AltingChannelInput previous_event, AltingChannelInput delete_event,
 			AltingChannelInput send_event, AltingChannelInput icon_event, ChannelOutput send, ChannelOutput icon_start) {
@@ -37,43 +36,54 @@ public class Mailbag implements CSProcess {
 		final int DELETE = 3;
 		final int SEND = 4;
 		final int ICON = 5;
+
+		boolean icon_clicked = false;
 		
-		//TODO Bug for any press before ICON (other than arrive as it is buffered)
-		icon_event.read();
-		System.out.println("ICON");
-		
+		//Ensure prefix closed. Icon must occur first (but arrive can happen at any time).
+
 		while(true){
 			switch(alt.fairSelect()){
 			case ARRIVE:
 				arrive_event.read();
-				System.out.println("Arrive");
-				num_messages++;
+//				if(icon_clicked){
+					System.out.println("Arrive");
+					num_messages++;
+//				}
 				break;
 			case NEXT:
 				next_event.read();
-				if(num_messages > 1){
-					System.out.println("Next");
+				if(icon_clicked){
+					if(num_messages > 1){
+						System.out.println("Next");
+					}
 				}
 				break;
 			case PREVIOUS:
 				previous_event.read();
-				if(num_messages > 1){
-					System.out.println("Previous");
+				if(icon_clicked){
+					if(num_messages > 1){
+						System.out.println("Previous");
+					}
 				}
 				break;
 			case DELETE:
 				delete_event.read();
-				if(num_messages > 0){
-					num_messages--;
-					System.out.println("Delete Message");
+				if(icon_clicked){
+					if(num_messages > 0){
+						num_messages--;
+						System.out.println("Delete Message");
+					}
 				}
 				break;
 			case SEND:
 				send_event.read();
-				send.write(1);
+				if(icon_clicked){
+					send.write(1);
+				}
 				break;
 			case ICON:
 				icon_event.read();
+				icon_clicked = true;
 				icon_start.write(1);
 				break;
 			}
