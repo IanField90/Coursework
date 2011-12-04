@@ -6,15 +6,10 @@ import org.jcsp.lang.CSProcess;
 import org.jcsp.lang.ChannelOutputInt;
 
 public class Departure implements CSProcess {
-//	private One2OneChannelInt depart_notify, depart_response;
-//
-//	public Depart(One2OneChannelInt depart_notify, One2OneChannelInt depart_response) {
-//		this.depart_notify = depart_notify;
-//		this.depart_response = depart_response;
-//	}
 	private AltingChannelInput depart_event;
 	private ChannelOutputInt departure;
 	private AltingChannelInputInt depart_response;
+	
 	public Departure(AltingChannelInput depart_event, ChannelOutputInt departure,
 			AltingChannelInputInt depart_response){
 		this.depart_event = depart_event;
@@ -33,6 +28,8 @@ public class Departure implements CSProcess {
 				// -1 passed to stop busy waiting if no cars in car park
 				if(spaces != -1){
 					System.out.println("Departure. Spaces left: " + spaces);
+				}else{
+					System.out.println("No cars in car park");
 				}
 			}
 		}

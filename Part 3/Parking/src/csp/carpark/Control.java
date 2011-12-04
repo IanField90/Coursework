@@ -11,8 +11,8 @@ public class Control implements CSProcess{
 	private AltingChannelInputInt depart;
 	private ChannelOutputInt arrive_out;
 	private ChannelOutputInt depart_out;
-	private final int MAX_SPACES = 10;
-	private int spaces = 10;
+	private final int MAX_SPACES = 3;
+	private int spaces = 3;
 	
 	//Set up control for 2 way communications with Arrive and Depart.
 	public Control(AltingChannelInputInt arrive, AltingChannelInputInt depart,
@@ -49,6 +49,9 @@ public class Control implements CSProcess{
 					arrive.read();
 					spaces--;
 					arrive_out.write(spaces);
+				}else{
+					arrive.read();
+					arrive_out.write(-1);
 				}
 				break;
 
