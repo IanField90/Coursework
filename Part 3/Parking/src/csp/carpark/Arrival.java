@@ -27,8 +27,9 @@ public class Arrival implements CSProcess {
 				
 				arrive.write(car_number);
 				int spaces = arrive_response.read();
+				//Remove check for Lock free (queue, [buffer])
 				if(spaces != -1){
-					System.out.println("Car #" + car_number + " Arrive. Spaces left: " + spaces);
+					System.out.println("Car arrive");// + car_number + " Arrive. Spaces left: " + spaces);
 				}
 				else{
 					System.out.println("No space in carpark");

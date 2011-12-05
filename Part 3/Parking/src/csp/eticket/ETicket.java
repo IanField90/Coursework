@@ -33,7 +33,7 @@ public class ETicket implements CSProcess{
 		final One2OneChannel arrive_event = Channel.one2one(new OverWriteOldestBuffer(n));
 		final One2OneChannel icon_event = Channel.one2one();// UInt display
 		final One2OneChannel icon_start = Channel.one2one(); //Send to mailbag from icon to enable next, prev etc operations
-		
+		final One2OneChannel ui_start = Channel.one2one();
 		final One2OneChannel next_event = Channel.one2one();
 		final One2OneChannel previous_event = Channel.one2one();
 		final One2OneChannel delete_event = Channel.one2one();
@@ -48,11 +48,12 @@ public class ETicket implements CSProcess{
 		final ActiveButton btn_send_event = new ActiveButton(null, send_event.out(), "Send");
 		
 		
-		Icon icon = new Icon(icon_start.in());
+		Icon icon = new Icon(icon_start.in(), ui_start.out());
 		Mailbag mailbag = new Mailbag(arrive_event.in(), next_event.in(), previous_event.in(), delete_event.in(),
 				send_event.in(), icon_event.in(), send.out(), icon_start.out());
 		
 		Dispatch dispatch = new Dispatch(send.in());
+		UserInterface userinterface = new UserInterface(ui_start.in());
 		
 		frame.setLayout(new GridLayout(2, 3));
 		frame.add(btn_arrive_event);
@@ -69,7 +70,8 @@ public class ETicket implements CSProcess{
 				btn_arrive_event, btn_icon_event, btn_next_event, btn_previous_event, btn_delete_event, btn_send_event,
 				icon,
 				mailbag,
-				dispatch
+				dispatch,
+				userinterface
 		}).run();
 		
 	}

@@ -6,7 +6,6 @@ import java.util.ArrayList;
 
 import org.jcsp.awt.ActiveButton;
 import org.jcsp.awt.ActiveClosingFrame;
-import org.jcsp.awt.ActiveTextField;
 import org.jcsp.lang.CSProcess;
 import org.jcsp.lang.Channel;
 import org.jcsp.lang.One2OneChannel;

@@ -38,23 +38,23 @@ public class Mailbag implements CSProcess {
 		final int ICON = 5;
 
 		boolean icon_clicked = false;
-		
+
 		//Ensure prefix closed. Icon must occur first (but arrive can happen at any time).
 
 		while(true){
 			switch(alt.fairSelect()){
 			case ARRIVE:
 				arrive_event.read();
-//				if(icon_clicked){
-					System.out.println("Arrive");
-					num_messages++;
-//				}
+				System.out.println("Arrive");
+				num_messages++;
 				break;
 			case NEXT:
 				next_event.read();
 				if(icon_clicked){
 					if(num_messages > 1){
 						System.out.println("Next");
+					}else{
+						System.out.println("Can't do next as only 1 in mailbox");
 					}
 				}
 				break;
@@ -63,6 +63,8 @@ public class Mailbag implements CSProcess {
 				if(icon_clicked){
 					if(num_messages > 1){
 						System.out.println("Previous");
+					}else{
+						System.out.println("Can't do previous as only 1 in mailbox");
 					}
 				}
 				break;

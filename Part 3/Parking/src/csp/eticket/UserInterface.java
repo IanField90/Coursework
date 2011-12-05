@@ -2,19 +2,17 @@ package csp.eticket;
 
 import org.jcsp.lang.AltingChannelInput;
 import org.jcsp.lang.CSProcess;
+import org.jcsp.lang.ChannelInput;
 
 public class UserInterface implements CSProcess{
-	private AltingChannelInput icon_event;
-	public UserInterface(AltingChannelInput icon_event){
-		this.icon_event = icon_event;
+	private ChannelInput ui_start;
+	public UserInterface(AltingChannelInput ui_start){
+		this.ui_start = ui_start;
 	}
 	
 	public void run(){
-		while(true){
-			if(icon_event.pending()){
-				icon_event.read();
-				System.out.println("User Interface launched");
-			}
-		}
+		ui_start.read();
+		System.out.println("User Interface launched");
+
 	}
 }
