@@ -1,15 +1,10 @@
 package csp.booking;
 
-import java.awt.Frame;
-import java.awt.GridLayout;
-import java.util.ArrayList;
-
-import org.jcsp.awt.ActiveButton;
-import org.jcsp.awt.ActiveClosingFrame;
 import org.jcsp.lang.CSProcess;
 import org.jcsp.lang.Channel;
 import org.jcsp.lang.One2OneChannel;
 import org.jcsp.lang.Parallel;
+import org.jcsp.util.OverWriteOldestBuffer;
 
 /**
  * 
@@ -31,32 +26,24 @@ public class Booking implements CSProcess {
 	 */
 
 	public static void main(String argv[]){
-		ActiveClosingFrame activeClosingFrame = new ActiveClosingFrame("Booking");
-		final Frame frame = activeClosingFrame.getActiveFrame();
-		
-		ArrayList<Integer> users = new ArrayList<Integer>();
-		int user_counter = 0;
-		
-		final One2OneChannel reserve_event = Channel.one2one();
-		final One2OneChannel send_event = Channel.one2one();
-		
-		final ActiveButton btn_reserve = new ActiveButton(null, reserve_event.out(), "Reserve");		
-		
-		
-		frame.setLayout(new GridLayout(3, 3));
-		frame.add(btn_reserve);
-		frame.pack();
-		frame.setVisible(true);
-		
-		Reserve reserve_proc = new Reserve(reserve_event.in(), send_event.out());
-		Send send_proc = new Send(send_event.in());
-		
+		int max_users = 10;
+		final One2OneChannel internet = Channel.one2one(new OverWriteOldestBuffer(max_users));
+		final One2OneChannel response = Channel.one2one(new OverWriteOldestBuffer(max_users));
+		final One2OneChannel booking = Channel.one2one(new OverWriteOldestBuffer(max_users));
+				
+		Server server = new Server(internet.in(), response.out(), booking.out()); // creates user connections
+		Book book = new Book(booking.in()); //listens then sends ETicket
+		User user1 = new User(internet.out(), response.in());
+		User user2 = new User(internet.out(), response.in());
+		User user3 = new User(internet.out(), response.in());
+				
 		
 		new Parallel(new CSProcess[]{
-				activeClosingFrame,
-				btn_reserve,
-				send_proc,
-				reserve_proc
+				server,
+				book,
+				user1,
+				user2,
+				user3
 				
 		}).run();
 	}
