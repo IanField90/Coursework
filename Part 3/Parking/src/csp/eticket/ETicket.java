@@ -16,13 +16,12 @@ public class ETicket implements CSProcess{
 	
 	public ETicket(One2OneChannel chan_mail) {
 		// TODO Auto-generated constructor stub
+		// Would be used in full integration
 	}
 	
-	public ETicket(){
-		
-	}
 	public void run(){
-		
+		//would be the 'main' method's contents (roughly)
+		// if fully integrated
 	}
 	
 	public static void main(String argv[]){
@@ -31,15 +30,20 @@ public class ETicket implements CSProcess{
 		int n = 10; //Buffer size
 		
 		final One2OneChannel arrive_event = Channel.one2one(new OverWriteOldestBuffer(n));
-		final One2OneChannel icon_event = Channel.one2one();// UInt display
-		final One2OneChannel icon_start = Channel.one2one(); //Send to mailbag from icon to enable next, prev etc operations
+		// UInt display
+		final One2OneChannel icon_event = Channel.one2one();
+		//Send to mailbag from icon to enable next, prev etc operations
+		final One2OneChannel icon_start = Channel.one2one(); 
 		final One2OneChannel ui_start = Channel.one2one();
 		final One2OneChannel next_event = Channel.one2one();
 		final One2OneChannel previous_event = Channel.one2one();
 		final One2OneChannel delete_event = Channel.one2one();
-		final One2OneChannel send_event = Channel.one2one(); //triggers dispatch
-		final One2OneChannel send = Channel.one2one();// send -> DISPATCH
+		//triggers dispatch
+		final One2OneChannel send_event = Channel.one2one();
+		// send -> DISPATCH
+		final One2OneChannel send = Channel.one2one();
 		
+		//Create basic buttons to trigger events for testing, rather than hand coding test cases
 		final ActiveButton btn_arrive_event = new ActiveButton(null, arrive_event.out(), "Arrive");
 		final ActiveButton btn_icon_event = new ActiveButton(null, icon_event.out(), "Icon");
 		final ActiveButton btn_next_event = new ActiveButton(null, next_event.out(), "Next");
@@ -47,7 +51,7 @@ public class ETicket implements CSProcess{
 		final ActiveButton btn_delete_event = new ActiveButton(null, delete_event.out(), "Delete");
 		final ActiveButton btn_send_event = new ActiveButton(null, send_event.out(), "Send");
 		
-		
+		//Instantiate processes
 		Icon icon = new Icon(icon_start.in(), ui_start.out());
 		Mailbag mailbag = new Mailbag(arrive_event.in(), next_event.in(), previous_event.in(), delete_event.in(),
 				send_event.in(), icon_event.in(), send.out(), icon_start.out());
@@ -55,6 +59,7 @@ public class ETicket implements CSProcess{
 		Dispatch dispatch = new Dispatch(send.in());
 		UserInterface userinterface = new UserInterface(ui_start.in());
 		
+		//Construct basic UI for testing
 		frame.setLayout(new GridLayout(2, 3));
 		frame.add(btn_arrive_event);
 		frame.add(btn_icon_event);
@@ -65,6 +70,7 @@ public class ETicket implements CSProcess{
 		frame.pack();
 		frame.setVisible(true);
 		
+		//Run processes
 		new Parallel(new CSProcess[]{
 				activeClosingFrame,
 				btn_arrive_event, btn_icon_event, btn_next_event, btn_previous_event, btn_delete_event, btn_send_event,

@@ -12,8 +12,11 @@ public class Book implements CSProcess {
 	
 	public void run(){
 		while(true){
+			//Find out which user is booking
 			String user = (String) book.read();
+			//Write trace
 			System.out.println(user + " Email sent!");
+			//If integrating, this would trigger the arrive event in a mailbox/eticket
 		}
 	}
 }

@@ -16,8 +16,11 @@ public class Icon implements CSProcess {
 	public void run(){
 		boolean launched = false;
 		while(true){
+			//Read to see if the icon is pressed
 			icon_start.read();
+			//Write trace as icon has been pressed
 			System.out.println("ICON");
+			//prevent multiple UI launching.
 			if(!launched){
 				ui_start.write(1);
 				launched = true;

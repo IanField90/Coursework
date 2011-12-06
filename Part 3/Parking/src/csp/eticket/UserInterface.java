@@ -11,7 +11,9 @@ public class UserInterface implements CSProcess{
 	}
 	
 	public void run(){
+		//receive event
 		ui_start.read();
+		// write trace
 		System.out.println("User Interface launched");
 
 	}

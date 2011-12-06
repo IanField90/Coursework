@@ -17,7 +17,7 @@ public class Session implements CSProcess {
 	
 	public void run(){
 		boolean quit = false;
-		
+		System.out.println(this.toString() +" Started");
 		while(!quit){
 			int req_type = (Integer) request.read();
 			
@@ -25,14 +25,15 @@ public class Session implements CSProcess {
 			case -1:
 				//Disconnect
 				quit = true;
-				System.out.println(this.toString() + " disconnected");
+				System.out.println(this.toString() + " Disconnected");
 				break;
 			case 1:
 				//Book
 				System.out.println(this.toString() + " Booked");
+				//trigger book to send email confirmation
 				book.write(this.toString());
 
-				//tell user booked
+				//tell user that they have booked
 				response.write(1);
 				break;
 			}

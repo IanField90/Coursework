@@ -33,6 +33,7 @@ public class Carpark implements CSProcess {
 		final Frame frame = activeClosingFrame.getActiveFrame();
 		int n = 10;// Buffer size
 
+		//Establish communication channels
 		final One2OneChannel arrive_event = Channel.one2one(new OverWriteOldestBuffer(n));
 		final One2OneChannel depart_event = Channel.one2one(new OverWriteOldestBuffer(n));
 		final One2OneChannelInt arrive = Channel.one2oneInt();
@@ -40,19 +41,23 @@ public class Carpark implements CSProcess {
 		final One2OneChannelInt arrive_response = Channel.one2oneInt();
 		final One2OneChannelInt depart_response = Channel.one2oneInt();
 
+		//Buttons used to trigger events, instead of coding test cases
 		final ActiveButton btn_arrive = new ActiveButton(null, arrive_event.out(), "Arrive");
 		final ActiveButton btn_depart = new ActiveButton(null, depart_event.out(), "Depart");
 
+		//Instantiate the processes
 		Control control = new Control(arrive.in(), depart.in(), arrive_response.out(), depart_response.out());
 		Arrival arrival = new Arrival(arrive_event.in(), arrive.out(), arrive_response.in());
 		Departure departure = new Departure(depart_event.in(), depart.out(), depart_response.in());
 		
+		//create basic user interface for testing
 		frame.setLayout(new GridLayout(1, 2));
 		frame.add(btn_arrive);
 		frame.add(btn_depart);
 		frame.pack();
 		frame.setVisible(true);
 		
+		//Run the carpark
 		new Parallel(new CSProcess[]{
 				activeClosingFrame,
 				btn_arrive,

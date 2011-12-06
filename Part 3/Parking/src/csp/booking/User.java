@@ -16,8 +16,14 @@ public class User implements CSProcess{
 	public void run(){
 		internet.write(1);
 		
+		//get the two communication channels from the server for
+		//duration of session, once a user sends disconnect, the
+		//session is destroyed (CSProcess run has completed for Session)
 		ChannelOutput out = (ChannelOutput) response.read();
 		ChannelInput in = (ChannelInput) response.read();
+		
+		//Wrtie trace for user connection
+		System.out.println(this.toString() + " Connected");
 		
 		out.write(1); //Book
 		in.read();// Confirmation
