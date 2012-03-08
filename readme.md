@@ -23,3 +23,9 @@ CS2K7  -  XML
 
 CS2TS6 -  Soft Eng
 
+**Part 3**
+
+SE3AC11 - Advanced Computing
+
+SE3IP11 - Individual Project
+

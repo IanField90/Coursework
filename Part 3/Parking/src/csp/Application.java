@@ -24,9 +24,6 @@ public class Application extends JPanel implements ActionListener{
 	private static Booking booking;
 	private static ETicket eticket;
 	private static One2OneChannel chan_mail, chan_ticket;
-	private JButton btn_booking = new JButton("Booking");
-	private JButton btn_eticket = new JButton("E-Ticket");
-	private JButton btn_carpark = new JButton("Car Park");
 	
 	public static void main(String args[]){
 		

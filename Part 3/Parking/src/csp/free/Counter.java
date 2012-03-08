@@ -13,14 +13,16 @@ public class Counter {
 		Thread t1 = new Thread(new Runnable(){
 			public void run(){
 				while(true){
-					System.out.println("T1 Increment: " + number.getAndIncrement());//increment());
+					number.getAndIncrement();
+					System.out.println("T1 Increment: " + number);//increment());
 				}
 			}
 		});
 		Thread t2 = new Thread(new Runnable(){
 			public void run(){
 				while(true){
-					System.out.println("T2 Increment: " + number.getAndIncrement());//increment());
+					number.getAndIncrement();
+					System.out.println("T2 Increment: " + number);//increment());
 				}
 			}
 		});
